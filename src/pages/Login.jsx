@@ -13,10 +13,10 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Valid credentials (in production, use API)
+  // Valid credentials from environment variables
   const validCredentials = {
-    email: "admin@example.com",
-    password: "admin123",
+    email: import.meta.env.VITE_ADMIN_EMAIL || "tanim123@gmail.com",
+    password: import.meta.env.VITE_ADMIN_PASSWORD || "admin123%",
     name: "তাজমিনুর রহমান",
     role: "admin"
   };
@@ -25,6 +25,11 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
+    // Debug: Log the credentials being checked
+    console.log("Attempting login with:", credentials.email);
+    console.log("Valid email should be:", validCredentials.email);
+    console.log("Password match:", credentials.password === validCredentials.password);
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -67,6 +72,18 @@ const Login = () => {
 
         {/* Login Form */}
         <div className="p-8">
+          {/* Debug Info - Remove this in production */}
+          {import.meta.env.DEV && (
+            <div className="mb-6 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded text-sm">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span>Debug: Valid email is {validCredentials.email}</span>
+              </div>
+            </div>
+          )}
+          
           {error && (
             <div className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
               <div className="flex items-center">

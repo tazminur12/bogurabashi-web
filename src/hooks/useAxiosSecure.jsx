@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 const useAxiosSecure = () => {
   const axiosSecure = useMemo(() => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://bogurabashi-server.vercel.app";
     const instance = axios.create({
       baseURL: apiBaseUrl,
       withCredentials: true,

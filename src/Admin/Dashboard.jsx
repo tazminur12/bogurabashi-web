@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { FaUserCircle, FaHome, FaInfoCircle, FaTools, FaNewspaper, FaBell, FaPhoneAlt, FaSignOutAlt, FaBars, FaDesktop, FaBlog, FaAd, FaImages, FaHospital, FaUserMd, FaAmbulance, FaChartBar, FaUsers, FaExclamationTriangle } from "react-icons/fa";
-import logo from "/vite.svg";
+import logo from "../assets/বগুড়াবাসী..png";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -72,9 +72,9 @@ const DashboardLayout = () => {
         <div className="flex flex-col h-full p-4 border-r border-gray-200">
           {/* Logo */}
           <div className="flex items-center justify-between p-2 mb-6">
-            <div className="flex items-center space-x-2">
-              <img src={logo} alt="Logo" className="h-8" />
-              <a href="/" className="text-xl font-bold text-blue-700 hover:underline focus:outline-none">বগুড়াবাসী</a>
+            <div className="flex items-center space-x-3">
+              <img src={logo} alt="Logo" className="h-16 w-auto" />
+              <a href="/" className="text-2xl font-bold text-blue-700 hover:underline focus:outline-none">বগুড়াবাসী</a>
             </div>
           </div>
 
