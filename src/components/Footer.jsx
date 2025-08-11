@@ -105,11 +105,11 @@ const Footer = () => {
           <h3 className="text-xl font-semibold text-white mb-4 pb-2 border-b border-gray-700">সেবাসমূহ</h3>
           <ul className="space-y-3">
             {[
-              { name: 'রক্তদাতা', link: '/services/blood-donor' },
-              { name: 'ডাক্তার', link: '/services/doctors' },
-              { name: 'অ্যাম্বুলেন্স', link: '/services/ambulance' },
-              { name: 'শিক্ষা প্রতিষ্ঠান', link: '/services/education' },
-              { name: 'জরুরী সেবা', link: '/services/emergency' }
+              { name: 'রক্তদাতা', link: '/all-blood' },
+              { name: 'ডাক্তার', link: '/doctor' },
+              { name: 'অ্যাম্বুলেন্স', link: '/ambulance' },
+              { name: 'শিক্ষা প্রতিষ্ঠান', link: '/education' },
+              { name: 'জরুরী সেবা', link: '/services' }
             ].map((item, index) => (
               <li key={index}>
                 <motion.a 
@@ -139,27 +139,10 @@ const Footer = () => {
             </li>
             <li className="flex items-center">
               <FaPhoneAlt className="text-blue-400 mr-3 flex-shrink-0" />
-              <a href="tel:+880123456789" className="hover:text-white transition">+880-123-456789</a>
+              <a href="tel:+8801645460095" className="hover:text-white transition">+8801645460095</a>
             </li>
           </ul>
 
-          <div className="mt-6">
-            <h4 className="text-white mb-2">নিউজলেটার সাবস্ক্রাইব করুন</h4>
-            <div className="flex">
-              <input 
-                type="email" 
-                placeholder="আপনার ইমেইল" 
-                className="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
-              />
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-lg transition"
-              >
-                সাবমিট
-              </motion.button>
-            </div>
-          </div>
         </motion.div>
       </div>
 
@@ -174,12 +157,14 @@ const Footer = () => {
           <div>
             © {new Date().getFullYear()} বগুড়াবাসী. সর্বস্বত্ব সংরক্ষিত। 
             <span className="mx-2">|</span>
-            <NavLink 
-              to="/developer" 
+            <a 
+              href="https://tanimportfolio1.netlify.app" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-white transition"
             >
               Developed by Tazminur Rahman Tanim
-            </NavLink>
+            </a>
           </div>
           <div className="mt-2 md:mt-0">
             <a href="/terms" className="hover:text-white transition mx-2">ব্যবহারের শর্তাবলী</a>

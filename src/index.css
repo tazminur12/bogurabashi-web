@@ -1,2 +1,19 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
+    display: inline-block;
+  }
+
+body {
+  font-family: 'Hind Siliguri', Arial, sans-serif;
+}
+
+.bangla-font {
+  font-family: 'Hind Siliguri', Arial, sans-serif;
+}
