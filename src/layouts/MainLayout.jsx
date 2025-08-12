@@ -3,6 +3,8 @@ import Navbar from '../components/Navbar';
 import { Outlet, useLocation } from 'react-router-dom'; // Note: import from react-router-dom
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
+import ScrollToTop from '../components/ScrollToTop';
+import LiveChat from '../components/LiveChat';
 
 // appease linter: make sure imported motion is referenced as a value
 const _MOTION_USED = motion;
@@ -17,6 +19,7 @@ const MainLayout = () => {
   const location = useLocation();
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-grow">
         <motion.div key={location.pathname} {...transitionProps}>
@@ -24,6 +27,7 @@ const MainLayout = () => {
         </motion.div>
       </main>
       <Footer />
+      <LiveChat />
     </div>
   );
 };

@@ -574,6 +574,9 @@ const router = createBrowserRouter([
       }
     ],
   },
-]);
+], {
+  // Add scroll restoration behavior
+  scrollRestoration: "auto"
+});
 
 export default router;
