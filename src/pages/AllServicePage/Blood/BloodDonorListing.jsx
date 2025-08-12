@@ -177,13 +177,13 @@ const BloodDonorListing = () => {
         {/* Filters */}
         <div className="bg-white rounded-xl shadow p-6 mb-6">
           <div className="relative mb-4">
-            <FaSearch className="absolute left-3 top-3 text-gray-400" />
+            <FaSearch className="absolute left-3 top-3 text-black-400" />
             <input
               type="text"
               placeholder="নাম, মোবাইল বা ঠিকানা"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 text-black placeholder-black"
             />
           </div>
           <button onClick={() => setShowFilters(!showFilters)} className="text-red-600 flex items-center gap-1">
@@ -219,7 +219,7 @@ const BloodDonorListing = () => {
               return (
                 <div key={donor._id} className="border rounded-xl p-4 bg-white hover:shadow-lg transition">
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-bold text-lg">{donor.name}</h3>
+                    <h3 className="font-bold text-lg text-black">{donor.name}</h3>
                     <span className={`text-xs px-2 py-1 rounded ${getBloodGroupColor(donor.bloodGroup)} border`}>
                       {donor.bloodGroup}
                     </span>
