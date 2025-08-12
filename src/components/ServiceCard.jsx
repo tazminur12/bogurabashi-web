@@ -1,7 +1,7 @@
 // ServiceCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaHeartbeat, FaHospital, FaUserMd, FaAmbulance, FaFireExtinguisher, FaShieldAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaHeartbeat, FaHospital, FaUserMd, FaAmbulance, FaFireExtinguisher, FaShieldAlt, FaExclamationTriangle, FaBus, FaTrain } from 'react-icons/fa';
 
 const services = [
   {
@@ -52,6 +52,20 @@ const services = [
     description: 'দুর্নীতি, দুর্যোগ ও অন্যায়ের বিরুদ্ধে রিপোর্ট করুন।',
     icon: <FaExclamationTriangle className="text-4xl text-red-600" />,
     link: '/disaster-reports',
+  },
+  {
+    id: 8,
+    title: 'বাস টিকেট',
+    description: 'বগুড়া থেকে বিভিন্ন গন্তব্যের বাস টিকেট বুকিং।',
+    icon: <FaBus className="text-4xl text-green-500" />,
+    link: '/bus-ticket',
+  },
+  {
+    id: 9,
+    title: 'রেলওয়ে সেবা',
+    description: 'বগুড়া রেলওয়ে স্টেশন ও ট্রেনের সময়সূচী।',
+    icon: <FaTrain className="text-4xl text-blue-500" />,
+    link: '/railway',
   },
 ];
 

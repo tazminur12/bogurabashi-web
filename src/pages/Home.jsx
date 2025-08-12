@@ -304,25 +304,25 @@ function Home() {
 
      
 
-      <Motion.div variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}>
+      <Motion.div variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} className="px-2 sm:px-4">
         <Slider />
       </Motion.div>
       
       {/* District Statistics */}
-      <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-16 px-4 bg-white">
+      <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-12 sm:py-16 px-3 sm:px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">বগুড়া জেলার পরিসংখ্যান</h2>
-            <p className="text-gray-600 text-lg">উত্তরবঙ্গের প্রাণকেন্দ্র হিসেবে বগুড়ার গুরুত্বপূর্ণ তথ্য</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">বগুড়া জেলার পরিসংখ্যান</h2>
+            <p className="text-gray-600 text-base sm:text-lg">উত্তরবঙ্গের প্রাণকেন্দ্র হিসেবে বগুড়ার গুরুত্বপূর্ণ তথ্য</p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {districtStats.map((stat, index) => (
-              <div key={index} className="text-center p-6 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:shadow-lg transition-all duration-300">
-                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-${stat.color}-100 text-${stat.color}-600 mb-4`}>
-                  {React.createElement(stat.icon, { size: 24 })}
+              <div key={index} className="text-center p-4 sm:p-6 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:shadow-lg transition-all duration-300">
+                <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-${stat.color}-100 text-${stat.color}-600 mb-3 sm:mb-4`}>
+                  {React.createElement(stat.icon, { size: 20 })}
                 </div>
-                <div className="text-2xl lg:text-3xl font-bold text-gray-800 mb-2">{stat.value}</div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-1 sm:mb-2">{stat.value}</div>
+                <div className="text-gray-600 font-medium text-sm sm:text-base">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -330,7 +330,7 @@ function Home() {
       </Motion.section>
 
       {/* Services Section */}
-      <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-16 px-4 bg-white">
+      <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-12 sm:py-16 px-3 sm:px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <ServiceCard />
         </div>
@@ -338,29 +338,29 @@ function Home() {
 
       {/* Ads Section */}
       {ads.length > 0 && (
-        <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-8 px-4 bg-gradient-to-br from-white ">
+        <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-6 sm:py-8 px-3 sm:px-4 bg-gradient-to-br from-white ">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
-                <FaAd className="w-6 h-6 text-blue-600" />
+            <div className="text-center mb-4 sm:mb-6">
+              <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full mb-2 sm:mb-3">
+                <FaAd className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-2">বিশেষ বিজ্ঞাপন</h2>
-              <p className="text-gray-600">আমাদের অংশীদারদের বিশেষ অফার</p>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-1 sm:mb-2">বিশেষ বিজ্ঞাপন</h2>
+              <p className="text-gray-600 text-sm sm:text-base">আমাদের অংশীদারদের বিশেষ অফার</p>
             </div>
             {adsLoading ? (
-              <div className="flex items-center justify-center py-6">
-                <div className="animate-spin rounded-full h-6 w-6 border-4 border-blue-500 border-t-transparent"></div>
-                <span className="ml-2 text-gray-600 text-sm">বিজ্ঞাপন লোড হচ্ছে...</span>
+              <div className="flex items-center justify-center py-4 sm:py-6">
+                <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-4 border-blue-500 border-t-transparent"></div>
+                <span className="ml-2 text-gray-600 text-xs sm:text-sm">বিজ্ঞাপন লোড হচ্ছে...</span>
               </div>
             ) : (
               <AdsSlider ads={ads} />
             )}
-            <div className="text-center mt-6">
+            <div className="text-center mt-4 sm:mt-6">
               <Link 
                 to="/ads" 
-                className="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                className="inline-flex items-center px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-xs sm:text-sm"
               >
-                আরও বিজ্ঞাপন দেখুন <FaArrowRight className="ml-2" />
+                আরও বিজ্ঞাপন দেখুন <FaArrowRight className="ml-1 sm:ml-2" />
               </Link>
             </div>
           </div>

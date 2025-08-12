@@ -97,10 +97,10 @@ const Slider = () => {
   if (loading) {
     return (
       <div className="w-full relative rounded-xl overflow-hidden shadow-lg">
-        <div className="relative h-[500px] md:h-[600px] bg-gray-200 flex items-center justify-center">
+        <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] bg-gray-200 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600">স্লাইডার লোড হচ্ছে...</p>
+            <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-3 sm:mb-4"></div>
+            <p className="text-gray-600 text-sm sm:text-base">স্লাইডার লোড হচ্ছে...</p>
           </div>
         </div>
       </div>
@@ -111,10 +111,10 @@ const Slider = () => {
   if (error && slides.length === 0) {
     return (
       <div className="w-full relative rounded-xl overflow-hidden shadow-lg">
-        <div className="relative h-[500px] md:h-[600px] bg-gray-100 flex items-center justify-center">
+        <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-red-600 mb-2">{error}</p>
-            <p className="text-gray-600">ডিফল্ট স্লাইডার দেখানো হচ্ছে</p>
+            <p className="text-red-600 mb-2 text-sm sm:text-base">{error}</p>
+            <p className="text-gray-600 text-sm sm:text-base">ডিফল্ট স্লাইডার দেখানো হচ্ছে</p>
           </div>
         </div>
       </div>
@@ -125,9 +125,9 @@ const Slider = () => {
   if (slides.length === 0) {
     return (
       <div className="w-full relative rounded-xl overflow-hidden shadow-lg">
-        <div className="relative h-[500px] md:h-[600px] bg-gray-100 flex items-center justify-center">
+        <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px] bg-gray-100 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-gray-600">কোনো স্লাইডার পাওয়া যায়নি</p>
+            <p className="text-gray-600 text-sm sm:text-base">কোনো স্লাইডার পাওয়া যায়নি</p>
           </div>
         </div>
       </div>
@@ -141,7 +141,7 @@ const Slider = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Slides */}
-      <div className="relative h-[500px] md:h-[600px]">
+      <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[600px]">
         {slides.map((slide, index) => (
           <div
             key={slide._id}
@@ -151,7 +151,7 @@ const Slider = () => {
           >
             <img 
               src={slide.image || slide.img} 
-              className="w-full h-full object-cover" 
+              className="w-full h-full object-cover object-center" 
               alt={slide.title} 
               loading="lazy"
               onError={(e) => {
@@ -160,23 +160,23 @@ const Slider = () => {
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
-              <div className="container mx-auto px-4 h-full flex flex-col justify-end pb-16 md:pb-24">
+              <div className="container mx-auto px-3 sm:px-4 h-full flex flex-col justify-end pb-8 sm:pb-12 md:pb-16 lg:pb-24">
                 <div 
-                  className="text-white max-w-3xl transform transition-all duration-1000 ease-in-out"
+                  className="text-white max-w-full sm:max-w-2xl lg:max-w-3xl transform transition-all duration-1000 ease-in-out"
                   style={{
                     transform: index === currentSlide ? 'translateY(0)' : 'translateY(20px)',
                     opacity: index === currentSlide ? 1 : 0
                   }}
                 >
-                  <h2 className="text-3xl md:text-5xl font-bold mb-3 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 leading-tight">
                     {slide.title}
                   </h2>
-                  <p className="text-lg md:text-xl mb-6">
+                  <p className="text-base sm:text-lg md:text-xl mb-4 sm:mb-6 text-white/90">
                     {slide.subtitle}
                   </p>
                   <Link
                     to={slide.link}
-                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300"
+                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors duration-300 text-sm sm:text-base"
                   >
                     {slide.cta}
                   </Link>
@@ -192,19 +192,19 @@ const Slider = () => {
         <>
           <button
             onClick={goToPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors duration-300 z-10"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full transition-colors duration-300 z-10"
             aria-label="Previous slide"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors duration-300 z-10"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full transition-colors duration-300 z-10"
             aria-label="Next slide"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -213,13 +213,13 @@ const Slider = () => {
 
       {/* Indicators - Only show if more than one slide */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/70'
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+                index === currentSlide ? 'bg-white w-4 sm:w-6' : 'bg-white/50 hover:bg-white/70'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -242,7 +242,7 @@ const Slider = () => {
 
       {/* Error message if API fails but we have fallback slides */}
       {error && slides.length > 0 && (
-        <div className="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm z-20">
+        <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-yellow-500 text-white px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm z-20">
           {error}
         </div>
       )}
