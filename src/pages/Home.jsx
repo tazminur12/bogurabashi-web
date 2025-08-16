@@ -116,9 +116,10 @@ function Home() {
     }
   });
 
-  // Breaking news from backend - latest 3 published news
+  // Breaking news from backend - latest 3 published news (newest first)
   const breakingNews = news
     .filter(item => item.status === "Published")
+    .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
     .slice(0, 3);
 
   // Helper function to format date
@@ -259,11 +260,16 @@ function Home() {
     retry: 1,
   });
 
-  // Filter news based on search term
-  const filteredNews = news.filter(item =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.content.toLowerCase().includes(searchTerm.toLowerCase())
-  ).slice(0, 6);
+  // Filter news based on search term and sort by newest first
+  const filteredNews = news
+    .filter(item => 
+      item.status === "Published" && 
+      (searchTerm === "" || 
+       item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       item.content?.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
+    .slice(0, 6);
 
 
 
@@ -274,7 +280,7 @@ function Home() {
         <div className="max-w-7xl mx-auto flex items-center">
           <div className="flex items-center mr-6">
             <div className="w-3 h-3 bg-white rounded-full animate-pulse mr-3"></div>
-            <span className="font-bold text-lg whitespace-nowrap">ব্রেকিং নিউজ:</span>
+            <span className="font-bold text-lg whitespace-nowrap">সর্বশেষ সংবাদ:</span>
           </div>
           <div className="overflow-hidden flex-1">
             {newsLoading ? (
@@ -375,7 +381,7 @@ function Home() {
             <div className="lg:col-span-3">
               <div className="flex justify-between items-center mb-8">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-2">সর্বশেষ সংবাদ</h2>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-2">সর্বশেষ সংবাদ (নতুন প্রথম)</h2>
                   <p className="text-gray-600">বগুড়া জেলার সর্বশেষ খবরাখবর</p>
                 </div>
                 <div className="relative">

@@ -63,10 +63,14 @@ const News = () => {
     (searchTerm === "" || 
      (item.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
      (item.content || '').toLowerCase().includes(searchTerm.toLowerCase()))
-  ).slice(0, 3);
+  )
+  .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
+  .slice(0, 3);
   
   // Get latest news (excluding featured and applying all filters)
-  const latestNews = filteredNews.filter(item => !featuredNews.includes(item));
+  const latestNews = filteredNews
+    .filter(item => !featuredNews.includes(item))
+    .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0));
 
   if (isLoading) {
     return (
