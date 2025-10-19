@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "/vite.svg";
 import ScrollToTop from "../components/ScrollToTop";
-import LiveChat from "../components/LiveChat";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -175,7 +174,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <LiveChat />
     </>
   );
 };

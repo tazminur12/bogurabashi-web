@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion as Motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
-  FaSearch, 
   FaCalendarAlt, 
   FaArrowRight, 
   FaFacebook, 
@@ -53,8 +52,7 @@ const reveal = { hidden:{opacity:0, y:20}, visible:{opacity:1, y:0, transition:{
 function Home() {
   const axiosSecure = useAxiosSecure();
   
-  // State for search functionality
-  const [searchTerm, setSearchTerm] = useState('');
+
   
 
 
@@ -260,14 +258,9 @@ function Home() {
     retry: 1,
   });
 
-  // Filter news based on search term and sort by newest first
+  // Filter news and sort by newest first
   const filteredNews = news
-    .filter(item => 
-      item.status === "Published" && 
-      (searchTerm === "" || 
-       item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       item.content?.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
+    .filter(item => item.status === "Published")
     .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
     .slice(0, 6);
 
@@ -379,21 +372,12 @@ function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* News Section */}
             <div className="lg:col-span-3">
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-2">সর্বশেষ সংবাদ (নতুন প্রথম)</h2>
-                  <p className="text-gray-600">বগুড়া জেলার সর্বশেষ খবরাখবর</p>
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                  <FaNewspaper className="w-8 h-8 text-blue-600" />
                 </div>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="নিউজ খুঁজুন..."
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
-                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">সর্বশেষ সংবাদ</h2>
+                <p className="text-gray-600 text-lg">বগুড়া জেলার সর্বশেষ খবর</p>
               </div>
               
               {newsLoading ? (

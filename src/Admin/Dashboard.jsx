@@ -3,7 +3,6 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { FaUserCircle, FaHome, FaInfoCircle, FaTools, FaNewspaper, FaBell, FaPhoneAlt, FaSignOutAlt, FaBars, FaDesktop, FaBlog, FaAd, FaImages, FaHospital, FaUserMd, FaAmbulance, FaChartBar, FaUsers, FaExclamationTriangle } from "react-icons/fa";
 import logo from "../assets/বগুড়াবাসী..png";
 import ScrollToTop from "../components/ScrollToTop";
-import LiveChat from "../components/LiveChat";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -223,7 +222,6 @@ const DashboardLayout = () => {
           </main>
         </div>
       </div>
-      <LiveChat />
     </>
   );
 };
