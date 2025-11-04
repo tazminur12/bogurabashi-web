@@ -158,6 +158,24 @@ import SliderAdmin from "../pages/Dashboard/SliderAdmin/SliderAdmin";
 import PartnersAdmin from "../pages/Dashboard/PartnersAdmin/PartnersAdmin";
 import DisasterAdmin from "../pages/Dashboard/DisasterAdmin/DisasterAdmin";
 import DisasterDetails from "../pages/AllServicePage/Disaster/DisasterDetails";
+import ElectionCenter from "../pages/Election/ElectionCenter";
+import Polls from "../pages/Election/Polls";
+import Candidates from "../pages/Election/Candidates";
+import CandidateDetails from "../pages/Election/CandidateDetails";
+import Assistance from "../pages/Election/Assistance";
+import Insights from "../pages/Election/Insights";
+import ElectionNews from "../pages/Election/ElectionNews";
+import ElectionAdmin from "../pages/Dashboard/ElectionAdmin/ElectionAdmin";
+import PollsAdmin from "../pages/Dashboard/ElectionAdmin/PollsAdmin";
+import ManagePolls from "../pages/Dashboard/ElectionAdmin/ManagePolls";
+import CandidatesAdmin from "../pages/Dashboard/CandidatesAdmin/CandidatesAdmin";
+import CandidatesList from "../pages/Dashboard/CandidatesAdmin/CandidatesList";
+import EditCandidate from "../pages/Dashboard/CandidatesAdmin/EditCandidate";
+import AssistanceInfoList from "../pages/Dashboard/VoterAssistanceDashboard/AssistanceInfoList";
+import VotingCenterList from "../pages/Dashboard/VoterAssistanceDashboard/VotingCenterList";
+import AnnouncementsList from "../pages/Dashboard/VoterAssistanceDashboard/AnnouncementsList";
+import VoterAssistanceDashboard from "../pages/Dashboard/VoterAssistanceDashboard/VoterAssistanceDashboard";
+import VotingDayAssistance from "../pages/Election/VotingDayAssistance";
 
 
 const router = createBrowserRouter([
@@ -233,6 +251,15 @@ const router = createBrowserRouter([
       { path: "content-creators", element: <ContentCreatorPage /> },
       { path: "add-content-creator", element: <AddContentCreator /> },
       { path: "content-creator/:id", element: <ContentCreatorDetails /> },
+      // Election & Civic Center
+      { path: "election", element: <ElectionCenter /> },
+      { path: "election/polls", element: <Polls /> },
+      { path: "election/candidates", element: <Candidates /> },
+      { path: "election/candidates/:id", element: <CandidateDetails /> },
+      { path: "election/assistance", element: <Assistance /> },
+      { path: "election/insights", element: <Insights /> },
+      { path: "election/news", element: <ElectionNews /> },
+      { path: "election/voting-day-assistance", element: <VotingDayAssistance /> },
     ],
   },
   {
@@ -565,6 +592,46 @@ const router = createBrowserRouter([
       }
       ,
       {
+        path: "election-admin",
+        Component: ElectionAdmin
+      },
+      {
+        path: "election-candidates",
+        Component: CandidatesAdmin
+      },
+      {
+        path: "election-candidates-list",
+        Component: CandidatesList
+      },
+      {
+        path: "election-candidates-edit/:id",
+        Component: EditCandidate
+      },
+      {
+        path: "voter-assistance",
+        Component: VoterAssistanceDashboard
+      },
+      {
+        path: "assistance-info-list",
+        Component: AssistanceInfoList
+      },
+      {
+        path: "voting-center-list",
+        Component: VotingCenterList
+      },
+      {
+        path: "announcements-list",
+        Component: AnnouncementsList
+      },
+      {
+        path: "election-polls",
+        Component: PollsAdmin
+      },
+      {
+        path: "manage-polls",
+        Component: ManagePolls
+      },
+      {
         path: "partners-admin",
         Component: PartnersAdmin
       },
@@ -574,9 +641,6 @@ const router = createBrowserRouter([
       }
     ],
   },
-], {
-  // Add scroll restoration behavior
-  scrollRestoration: "auto"
-});
+]);
 
 export default router;

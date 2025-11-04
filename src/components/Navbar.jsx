@@ -118,6 +118,7 @@ const Navbar = () => {
             {[
               { to: "/", label: "হোম" },
               { to: "/bogura-intro", label: "বগুড়ার পরিচিতি" }, 
+              { to: "/election", label: "নির্বাচন" },
               { to: "/about", label: "আমাদের কথা" },
               { to: "/news", label: "খবর" },
               { to: "/notice", label: "নোটিশ" },
@@ -197,6 +198,7 @@ const Navbar = () => {
             {[
               { to: "/", label: "হোম" },
               { to: "/bogura-intro", label: "বগুড়ার পরিচিতি" }, 
+              { to: "/election", label: "নির্বাচন" },
               { to: "/about", label: "আমাদের কথা" },
               { to: "/services", label: "সার্ভিসসমূহ" },
               { to: "/news", label: "খবর" },

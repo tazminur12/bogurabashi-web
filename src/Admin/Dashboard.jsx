@@ -43,6 +43,7 @@ const DashboardLayout = () => {
     { to: "/dashboard/contact", label: "যোগাযোগ", icon: <FaPhoneAlt className="text-lg" /> },
     { to: "/dashboard/content-creator-admin", label: "কন্টেন্ট ক্রিয়েটর", icon: <FaUserCircle className="text-lg" /> },
     { to: "/dashboard/disaster-admin", label: "দুর্নীতি রিপোর্ট", icon: <FaExclamationTriangle className="text-lg" /> },
+    { to: "/dashboard/election-admin", label: "ইলেকশন অ্যাডমিন", icon: <FaChartBar className="text-lg" /> },
   ];
 
   // Show loading if user data not loaded yet
@@ -211,8 +212,10 @@ const DashboardLayout = () => {
                     <DashboardCard icon={<FaNewspaper className="text-3xl text-blue-400" />} label="খবর" link="/dashboard/news-admin" />
                     <DashboardCard icon={<FaBell className="text-3xl text-yellow-500" />} label="নোটিশ" link="/dashboard/notice" />
                     <DashboardCard icon={<FaDesktop className="text-3xl text-indigo-500" />} label="ই-সেবা" link="/dashboard/eservice-admin" />
-                    <DashboardCard icon={<FaInfoCircle className="text-3xl text-cyan-600" />} label="বগুড়ার পরিচিতি" link="/dashboard/bogura-intro" />
-                    <DashboardCard icon={<FaPhoneAlt className="text-3xl text-green-500" />} label="যোগাযোগ" link="/dashboard/contact" />
+                  <DashboardCard icon={<FaInfoCircle className="text-3xl text-cyan-600" />} label="বগুড়ার পরিচিতি" link="/dashboard/bogura-intro" />
+                  <DashboardCard icon={<FaPhoneAlt className="text-3xl text-green-500" />} label="যোগাযোগ" link="/dashboard/contact" />
+                  <DashboardCard icon={<FaChartBar className="text-3xl text-purple-600" />} label="ইলেকশন সেন্টার" link="/election" />
+                  <DashboardCard icon={<FaChartBar className="text-3xl text-indigo-600" />} label="ইলেকশন অ্যাডমিন" link="/dashboard/election-admin" />
                   </div>
                 </div>
               ) : (
