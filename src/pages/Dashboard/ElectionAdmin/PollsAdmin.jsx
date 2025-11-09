@@ -46,44 +46,70 @@ const PollsAdmin = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const axiosSecure = useAxiosSecure();
 
-  // Load polls from localStorage on mount
+  // Load polls and check for edit
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
+    const loadPollsAndCheckEdit = async () => {
+      // Try to load from API first
       try {
-        const parsed = JSON.parse(stored);
-        const pollsArray = Array.isArray(parsed) ? parsed : [];
-        setPolls(pollsArray);
-        
-        // Check if we need to edit a poll
-        const editPollId = sessionStorage.getItem('editPollId');
-        if (editPollId && pollsArray.length > 0) {
-          const pollToEdit = pollsArray.find(p => p.id === Number(editPollId));
-          if (pollToEdit) {
-            setNewPoll({
-              question: pollToEdit.question,
-              options: pollToEdit.options,
-              category: pollToEdit.category || "",
-              status: pollToEdit.status,
-              startDate: pollToEdit.startDate || "",
-              endDate: pollToEdit.endDate || "",
-              startDateTime: pollToEdit.startDateTime || "",
-              endDateTime: pollToEdit.endDateTime || "",
-              description: pollToEdit.description || "",
-              allowMultipleVotes: pollToEdit.allowMultipleVotes || false,
-              settings: pollToEdit.settings || defaultNewPoll.settings,
-            });
-            setEditingPollId(pollToEdit.id);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }
-          sessionStorage.removeItem('editPollId');
+        const res = await axiosSecure.get('/polls');
+        const apiPolls = Array.isArray(res.data) ? res.data : [];
+        if (apiPolls.length > 0) {
+          setPolls(apiPolls);
+          checkForEditPoll(apiPolls);
+          return;
         }
       } catch (error) {
-        console.error("Error loading polls:", error);
-        setPolls([]);
+        console.error("Error loading polls from API:", error);
       }
-    }
-  }, []);
+
+      // Fallback to localStorage
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          const pollsArray = Array.isArray(parsed) ? parsed : [];
+          setPolls(pollsArray);
+          checkForEditPoll(pollsArray);
+        } catch (error) {
+          console.error("Error loading polls:", error);
+          setPolls([]);
+        }
+      }
+    };
+
+    const checkForEditPoll = (pollsArray) => {
+      const editPollId = sessionStorage.getItem('editPollId');
+      if (editPollId && pollsArray.length > 0) {
+        // Try both _id and id, and handle string/number comparison
+        const pollToEdit = pollsArray.find(p => {
+          const pid = String(p._id || p.id || '');
+          const eid = String(editPollId);
+          return pid === eid || pid === String(Number(eid)) || String(Number(pid)) === eid;
+        });
+        
+        if (pollToEdit) {
+          setNewPoll({
+            question: pollToEdit.question || "",
+            options: pollToEdit.options || ["", ""],
+            category: pollToEdit.category || "",
+            status: pollToEdit.status || "Active",
+            startDate: pollToEdit.startDate || "",
+            endDate: pollToEdit.endDate || "",
+            startDateTime: pollToEdit.startDateTime || "",
+            endDateTime: pollToEdit.endDateTime || "",
+            description: pollToEdit.description || "",
+            allowMultipleVotes: pollToEdit.allowMultipleVotes || false,
+            settings: pollToEdit.settings || defaultNewPoll.settings,
+          });
+          setEditingPollId(pollToEdit._id || pollToEdit.id);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        sessionStorage.removeItem('editPollId');
+      }
+    };
+
+    loadPollsAndCheckEdit();
+  }, [axiosSecure]);
 
   // Save polls to localStorage whenever polls change
   useEffect(() => {
@@ -144,8 +170,22 @@ const PollsAdmin = () => {
 
     if (editingPollId) {
       setPolls((prev) =>
-        prev.map((p) => (p.id === editingPollId ? { ...p, ...pollData } : p))
+        prev.map((p) => {
+          const pid = p._id || p.id;
+          const eid = editingPollId;
+          if (String(pid) === String(eid)) {
+            return { ...p, ...pollData };
+          }
+          return p;
+        })
       );
+      // Also try to update via API
+      try {
+        const id = editingPollId;
+        await axiosSecure.put(`/polls/${id}`, pollData);
+      } catch (error) {
+        console.error('Error updating poll via API:', error);
+      }
       setEditingPollId(null);
     } else {
       try {
@@ -170,134 +210,134 @@ const PollsAdmin = () => {
   const percent = (votes, total) => (total ? Math.round((votes * 100) / total) : 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 py-2 px-2 sm:py-3 sm:px-3">
     <div className="max-w-7xl mx-auto">
         {/* Header Section with Gradient */}
-        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-3xl shadow-2xl p-8 mb-8 text-white">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
-                <FaPoll className="text-4xl text-white" />
+        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-xl sm:rounded-2xl shadow-xl p-2 sm:p-3 md:p-4 mb-2 sm:mb-3 md:mb-4 text-white">
+          <div className="flex items-start justify-between gap-1.5 sm:gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="bg-white/20 backdrop-blur-sm p-1.5 sm:p-2 rounded-lg sm:rounded-xl">
+                <FaPoll className="text-lg sm:text-xl md:text-2xl text-white" />
               </div>
         <div>
-                <h2 className="text-3xl font-bold mb-2">জরিপ (Polls) অ্যাডমিন</h2>
-                <p className="text-purple-100 text-sm">নতুন জরিপ তৈরি, পরিচালনা ও অ্যানালিটিক্স দেখুন</p>
+                <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-0.5 sm:mb-1">জরিপ (Polls) অ্যাডমিন</h2>
+                <p className="text-purple-100 text-[10px] sm:text-xs">নতুন জরিপ তৈরি, পরিচালনা ও অ্যানালিটিক্স দেখুন</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap w-full sm:w-auto mt-2 sm:mt-0">
               <Link 
                 to="/dashboard/manage-polls" 
-                className="px-5 py-2.5 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-sm text-white text-[10px] sm:text-xs font-medium hover:bg-white/30 transition-all duration-300 flex items-center gap-1 shadow-md hover:shadow-lg"
               >
-                <FaChartBar /> Manage Polls
+                <FaChartBar className="text-[10px] sm:text-xs" /> <span className="hidden sm:inline">Manage Polls</span>
               </Link>
               <a 
                 href="/election/polls" 
-                className="px-5 py-2.5 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-sm text-white text-[10px] sm:text-xs font-medium hover:bg-white/30 transition-all duration-300 flex items-center gap-1 shadow-md hover:shadow-lg"
               >
-                <FaEye /> পাবলিক পোল
+                <FaEye className="text-[10px] sm:text-xs" /> <span className="text-[10px] sm:text-xs">পাবলিক পোল</span>
               </a>
               <button 
                 onClick={() => window.document.getElementById('poll-category-modal').showModal()} 
-                className="px-5 py-2.5 rounded-xl bg-yellow-400 text-gray-800 text-sm font-medium hover:bg-yellow-300 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-md sm:rounded-lg bg-yellow-400 text-gray-800 text-[10px] sm:text-xs font-medium hover:bg-yellow-300 transition-all duration-300 flex items-center gap-1 shadow-md hover:shadow-lg"
               >
-                <FaTag /> ক্যাটাগরি তৈরি
+                <FaTag className="text-[10px] sm:text-xs" /> <span className="text-[10px] sm:text-xs">ক্যাটাগরি তৈরি</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Summary Cards with Gradient */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5 md:gap-3 mb-2 sm:mb-3 md:mb-4">
           <SummaryCard 
             label="Total Polls" 
             value={summary.totalPolls} 
-            icon={<FaPoll className="text-3xl" />}
+            icon={<FaPoll className="text-base sm:text-lg md:text-xl" />}
             gradient="from-purple-500 to-pink-500"
             bgColor="bg-purple-100"
           />
           <SummaryCard 
             label="Total Votes" 
             value={summary.totalVotes} 
-            icon={<FaUsers className="text-3xl" />}
+            icon={<FaUsers className="text-base sm:text-lg md:text-xl" />}
             gradient="from-blue-500 to-cyan-500"
             bgColor="bg-blue-100"
           />
           <SummaryCard 
             label="Top Active Poll" 
             value={summary.topQuestion} 
-            icon={<FaChartBar className="text-3xl" />}
+            icon={<FaChartBar className="text-base sm:text-lg md:text-xl" />}
             gradient="from-indigo-500 to-purple-500"
             bgColor="bg-indigo-100"
           />
         </div>
 
         {/* Create / Edit Poll Form with Beautiful Design */}
-        <div className="bg-white rounded-3xl shadow-2xl border-2 border-purple-100 overflow-hidden mb-8">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-                  <FaPlus className="text-2xl" />
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border-2 border-purple-100 overflow-hidden mb-2 sm:mb-3 md:mb-4">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-2 sm:p-2.5 md:p-3 text-white">
+            <div className="flex items-center justify-between flex-wrap gap-1.5">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="bg-white/20 backdrop-blur-sm p-1.5 sm:p-2 rounded-md sm:rounded-lg">
+                  <FaPlus className="text-sm sm:text-base md:text-lg" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold">{editingPollId ? "পোল আপডেট" : "নতুন পোল তৈরি"}</h3>
-                  <p className="text-purple-100 text-sm mt-1">{editingPollId ? "আপনার পোল সম্পাদনা করুন" : "একটি নতুন জরিপ তৈরি করুন"}</p>
+                  <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">{editingPollId ? "পোল আপডেট" : "নতুন পোল তৈরি"}</h3>
+                  <p className="text-purple-100 text-[10px] sm:text-xs mt-0.5">{editingPollId ? "আপনার পোল সম্পাদনা করুন" : "একটি নতুন জরিপ তৈরি করুন"}</p>
       </div>
       </div>
           {editingPollId && (
                 <button 
                   onClick={() => { setEditingPollId(null); resetForm(); }} 
-                  className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
+                  className="px-2 py-1 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 flex items-center gap-1 text-[10px] sm:text-xs font-medium"
                 >
-                  <FaPlus /> নতুন তৈরি করুন
+                  <FaPlus /> <span className="text-[10px] sm:text-xs">নতুন তৈরি করুন</span>
                 </button>
           )}
         </div>
           </div>
-          <div className="p-8">
-            <form onSubmit={createOrUpdatePoll} className="space-y-6">
-              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-5 rounded-2xl border-2 border-purple-100">
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <FaPoll className="text-purple-600" /> Poll Question *
+          <div className="p-2 sm:p-2.5 md:p-3 lg:p-4">
+            <form onSubmit={createOrUpdatePoll} className="space-y-2 sm:space-y-2.5 md:space-y-3">
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-purple-100">
+                <label className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">
+                  <FaPoll className="text-purple-600 text-[10px] sm:text-xs" /> Poll Question *
                 </label>
             <input
               type="text"
-                  className="w-full border-2 border-purple-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white"
-                  placeholder="উদাহরণ: আপনি কাকে ভোট দিতে চান? বা আপনার এলাকায় উন্নয়ন কতটা হয়েছে বলে মনে করেন?"
+                  className="w-full border-2 border-purple-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white"
+                  placeholder="উদাহরণ: আপনি কাকে ভোট দিতে চান?"
               value={newPoll.question}
               onChange={(e) => setNewPoll((p) => ({ ...p, question: e.target.value }))}
               required
             />
           </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-5 rounded-2xl border-2 border-blue-100">
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <FaEdit className="text-blue-600" /> Description (Optional)
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-blue-100">
+                <label className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">
+                  <FaEdit className="text-blue-600 text-[10px] sm:text-xs" /> Description (Optional)
                 </label>
                 <textarea
-                  className="w-full border-2 border-blue-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white resize-none"
+                  className="w-full border-2 border-blue-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white resize-none"
                   placeholder="সংক্ষিপ্ত ব্যাখ্যা (ঐচ্ছিক)"
-                  rows="3"
+                  rows="2"
                   value={newPoll.description}
                   onChange={(e) => setNewPoll((p) => ({ ...p, description: e.target.value }))}
                 />
               </div>
 
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-2xl border-2 border-green-100">
-                <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
-                  <FaCheckCircle className="text-green-600" /> Options (2-5)
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-green-100">
+                <div className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1.5 sm:mb-2">
+                  <FaCheckCircle className="text-green-600 text-[10px] sm:text-xs" /> Options (2-5)
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-1.5 sm:space-y-2">
               {newPoll.options.map((opt, idx) => (
-                    <div key={idx} className="flex gap-3">
+                    <div key={idx} className="flex gap-1.5 sm:gap-2">
                       <div className="flex-1 relative">
-                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-green-600 font-bold bg-green-100 px-2 py-1 rounded-lg text-xs">
+                        <span className="absolute left-1.5 sm:left-2 md:left-2.5 top-1/2 transform -translate-y-1/2 text-green-600 font-bold bg-green-100 px-1 sm:px-1.5 py-0.5 rounded text-[10px] sm:text-xs">
                           {idx + 1}
                         </span>
                   <input
                     type="text"
-                          className="w-full border-2 border-green-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 bg-white"
+                          className="w-full border-2 border-green-200 rounded-md sm:rounded-lg pl-6 sm:pl-7 md:pl-8 pr-2 sm:pr-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 bg-white"
                     placeholder={`Option ${idx + 1}`}
                     value={opt}
                     onChange={(e) => handleOptionChange(idx, e.target.value)}
@@ -307,31 +347,31 @@ const PollsAdmin = () => {
                   <button
                     type="button"
                     onClick={() => removeOption(idx)}
-                        className="px-4 py-3 text-sm rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium hover:from-red-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
+                        className="px-1.5 sm:px-2 md:px-2.5 py-1.5 sm:py-2 text-[10px] sm:text-xs rounded-md sm:rounded-lg bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium hover:from-red-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-1"
                     disabled={newPoll.options.length <= 2}
                   >
-                        <FaTrash /> Remove
+                        <FaTrash className="text-[10px]" /> <span className="hidden sm:inline">Remove</span>
                   </button>
                 </div>
               ))}
               <button
                 type="button"
                 onClick={addOption}
-                    className="w-full px-4 py-3 text-sm rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                    className="w-full px-2 sm:px-2.5 py-1.5 sm:py-2 text-[10px] sm:text-xs rounded-md sm:rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1"
                 disabled={newPoll.options.length >= 5}
               >
-                    <FaPlus /> Add Option
+                    <FaPlus className="text-[10px] sm:text-xs" /> Add Option
               </button>
             </div>
           </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-5 rounded-2xl border-2 border-orange-100">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <FaTag className="text-orange-600" /> Poll Category / Tag
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3">
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-orange-100">
+                  <label className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">
+                    <FaTag className="text-orange-600 text-[10px] sm:text-xs" /> Poll Category / Tag
                   </label>
               <select
-                    className="w-full border-2 border-orange-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 bg-white"
+                    className="w-full border-2 border-orange-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 bg-white"
                 value={newPoll.category}
                 onChange={(e) => setNewPoll((p) => ({ ...p, category: e.target.value }))}
               >
@@ -340,14 +380,14 @@ const PollsAdmin = () => {
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-                  <div className="mt-2 text-xs text-orange-600 font-medium">প্রয়োজন হলে নতুন ক্যাটাগরি তৈরি করুন।</div>
+                  <div className="mt-1 text-[10px] sm:text-xs text-orange-600 font-medium">প্রয়োজন হলে নতুন ক্যাটাগরি তৈরি করুন।</div>
             </div>
-                <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-5 rounded-2xl border-2 border-pink-100">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <FaCog className="text-pink-600" /> Visibility Status
+                <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-pink-100">
+                  <label className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">
+                    <FaCog className="text-pink-600 text-[10px] sm:text-xs" /> Visibility Status
                   </label>
               <select
-                    className="w-full border-2 border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-300 bg-white"
+                    className="w-full border-2 border-pink-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-300 bg-white"
                 value={newPoll.status}
                 onChange={(e) => setNewPoll((p) => ({ ...p, status: e.target.value }))}
               >
@@ -358,25 +398,25 @@ const PollsAdmin = () => {
             </div>
           </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-r from-cyan-50 to-teal-50 p-5 rounded-2xl border-2 border-cyan-100">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <FaCalendarAlt className="text-cyan-600" /> Start Date & Time
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3">
+                <div className="bg-gradient-to-r from-cyan-50 to-teal-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-cyan-100">
+                  <label className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">
+                    <FaCalendarAlt className="text-cyan-600 text-[10px] sm:text-xs" /> Start Date & Time
                   </label>
               <input
                     type="datetime-local"
-                    className="w-full border-2 border-cyan-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300 bg-white"
+                    className="w-full border-2 border-cyan-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300 bg-white"
                     value={newPoll.startDateTime}
                     onChange={(e) => setNewPoll((p) => ({ ...p, startDateTime: e.target.value, startDate: e.target.value.split('T')[0] }))}
               />
             </div>
-                <div className="bg-gradient-to-r from-violet-50 to-purple-50 p-5 rounded-2xl border-2 border-violet-100">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                    <FaClock className="text-violet-600" /> End Date & Time
+                <div className="bg-gradient-to-r from-violet-50 to-purple-50 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl border-2 border-violet-100">
+                  <label className="flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">
+                    <FaClock className="text-violet-600 text-[10px] sm:text-xs" /> End Date & Time
                   </label>
               <input
                     type="datetime-local"
-                    className="w-full border-2 border-violet-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all duration-300 bg-white"
+                    className="w-full border-2 border-violet-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all duration-300 bg-white"
                     value={newPoll.endDateTime}
                     onChange={(e) => setNewPoll((p) => ({ ...p, endDateTime: e.target.value, endDate: e.target.value.split('T')[0] }))}
               />
@@ -384,83 +424,83 @@ const PollsAdmin = () => {
           </div>
 
           {/* Settings */}
-              <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl p-6 border-2 border-slate-200">
-                <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <FaCog className="text-slate-600" /> Advanced Settings
+              <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg sm:rounded-xl p-2 sm:p-2.5 md:p-3 border-2 border-slate-200">
+                <h4 className="text-xs sm:text-sm md:text-base font-semibold text-gray-800 mb-2 sm:mb-3 flex items-center gap-1">
+                  <FaCog className="text-slate-600 text-xs sm:text-sm" /> Advanced Settings
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3">
             <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Votes per user</label>
+                    <label className="block text-[10px] sm:text-xs font-semibold text-gray-700 mb-1">Votes per user</label>
               <input
                 type="number"
                 min={1}
-                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 bg-white"
+                      className="w-full border-2 border-slate-200 rounded-md sm:rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 bg-white"
                 value={newPoll.settings.votesPerUser}
                 onChange={(e) => setNewPoll((p) => ({ ...p, settings: { ...p.settings, votesPerUser: Number(e.target.value) || 1 } }))}
               />
             </div>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-slate-200 hover:border-purple-300 cursor-pointer transition-all duration-300">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <label className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-white rounded-md sm:rounded-lg border-2 border-slate-200 hover:border-purple-300 cursor-pointer transition-all duration-300">
                       <input 
                         type="checkbox" 
                         checked={newPoll.allowMultipleVotes} 
                         onChange={(e) => setNewPoll((p) => ({ ...p, allowMultipleVotes: e.target.checked }))}
-                        className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">Allow Multiple Votes</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-gray-700">Allow Multiple Votes</span>
                     </label>
-                    <label className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-slate-200 hover:border-blue-300 cursor-pointer transition-all duration-300">
+                    <label className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-white rounded-md sm:rounded-lg border-2 border-slate-200 hover:border-blue-300 cursor-pointer transition-all duration-300">
                       <input 
                         type="checkbox" 
                         checked={newPoll.settings.autoCloseOnEnd} 
                         onChange={(e) => setNewPoll((p) => ({ ...p, settings: { ...p.settings, autoCloseOnEnd: e.target.checked } }))}
-                        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">Auto-close on end date</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-gray-700">Auto-close on end date</span>
               </label>
-                    <label className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-slate-200 hover:border-green-300 cursor-pointer transition-all duration-300">
+                    <label className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-white rounded-md sm:rounded-lg border-2 border-slate-200 hover:border-green-300 cursor-pointer transition-all duration-300">
                       <input 
                         type="checkbox" 
                         checked={newPoll.settings.allowAnonymous} 
                         onChange={(e) => setNewPoll((p) => ({ ...p, settings: { ...p.settings, allowAnonymous: e.target.checked } }))}
-                        className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">Allow anonymous votes</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-gray-700">Allow anonymous votes</span>
               </label>
-                    <label className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-slate-200 hover:border-red-300 cursor-pointer transition-all duration-300">
+                    <label className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-white rounded-md sm:rounded-lg border-2 border-slate-200 hover:border-red-300 cursor-pointer transition-all duration-300">
                       <input 
                         type="checkbox" 
                         checked={newPoll.settings.adminOnly} 
                         onChange={(e) => setNewPoll((p) => ({ ...p, settings: { ...p.settings, adminOnly: e.target.checked } }))}
-                        className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">Admin-only poll</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-gray-700">Admin-only poll</span>
               </label>
                   </div>
             </div>
           </div>
 
-              <div className="flex items-center gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 sm:gap-2 md:gap-2.5 pt-1.5 sm:pt-2 md:pt-2.5">
                 <button 
                   type="submit" 
-                  className="flex-1 px-6 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  className="flex-1 px-3 sm:px-3.5 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-md sm:rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs sm:text-sm hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1"
                 >
                   {editingPollId ? (
                     <>
-                      <FaEdit /> Update Poll
+                      <FaEdit className="text-[10px] sm:text-xs" /> <span className="text-xs sm:text-sm">Update Poll</span>
                     </>
                   ) : (
                     <>
-                      <FaPlus /> Create Poll
+                      <FaPlus className="text-[10px] sm:text-xs" /> <span className="text-xs sm:text-sm">Create Poll</span>
                     </>
                   )}
             </button>
                 <button 
                   type="button" 
                   onClick={resetForm} 
-                  className="px-6 py-4 rounded-xl bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold hover:from-gray-500 hover:to-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
+                  className="px-3 sm:px-3.5 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-md sm:rounded-lg bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold text-xs sm:text-sm hover:from-gray-500 hover:to-gray-600 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1"
                 >
-                  <FaTimesCircle /> Reset
+                  <FaTimesCircle className="text-[10px] sm:text-xs" /> <span className="text-xs sm:text-sm">Reset</span>
             </button>
           </div>
         </form>
@@ -479,12 +519,12 @@ const PollsAdmin = () => {
         return (
           <dialog key={poll.id} id={`poll-result-${poll.id}`} className="modal">
             <div className="modal-backdrop" onClick={() => window.document.getElementById(`poll-result-${poll.id}`).close()}></div>
-            <div className="modal-box max-w-4xl">
-              <h3 className="font-bold text-xl mb-2">{poll.question}</h3>
+            <div className="modal-box max-w-4xl max-h-[90vh] overflow-y-auto">
+              <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1.5 sm:mb-2">{poll.question}</h3>
               {poll.description && (
-                <p className="text-gray-600 mb-2 text-sm">{poll.description}</p>
+                <p className="text-gray-600 mb-1.5 sm:mb-2 text-[10px] sm:text-xs">{poll.description}</p>
               )}
-              <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-3 mb-2 sm:mb-3 text-[10px] sm:text-xs text-gray-600">
                 <span>শ্রেণি: {poll.category || "—"}</span>
                 <span>•</span>
                 <span className={`px-2 py-1 rounded-full text-xs ${
@@ -499,12 +539,12 @@ const PollsAdmin = () => {
               </div>
 
               {/* Charts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3 my-2 sm:my-3 md:my-4">
                 {/* Pie Chart */}
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-3">Pie Chart</h4>
+                  <h4 className="font-semibold text-gray-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Pie Chart</h4>
                   {chartData.length > 0 && poll.votes > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]">
                       <PieChart>
                         <Pie
                           data={chartData}
@@ -512,7 +552,7 @@ const PollsAdmin = () => {
                           cy="50%"
                           labelLine={false}
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
+                          outerRadius={55}
                           fill="#8884d8"
                           dataKey="value"
                         >
@@ -525,7 +565,7 @@ const PollsAdmin = () => {
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-[300px] text-gray-500">
+                    <div className="flex items-center justify-center h-[200px] sm:h-[250px] text-gray-500 text-xs sm:text-sm">
                       No votes yet
                     </div>
                   )}
@@ -533,13 +573,13 @@ const PollsAdmin = () => {
 
                 {/* Bar Chart */}
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-3">Bar Chart</h4>
+                  <h4 className="font-semibold text-gray-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Bar Chart</h4>
                   {chartData.length > 0 && poll.votes > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]">
                       <BarChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                        <YAxis />
+                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={50} className="sm:h-[60px]" fontSize={10} />
+                        <YAxis fontSize={10} />
                         <Tooltip formatter={(value) => [`${value} votes`, '']} />
                         <Legend />
                         <Bar dataKey="value" fill="#3b82f6">
@@ -550,7 +590,7 @@ const PollsAdmin = () => {
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-[300px] text-gray-500">
+                    <div className="flex items-center justify-center h-[200px] sm:h-[250px] text-gray-500 text-xs sm:text-sm">
                       No votes yet
                     </div>
                   )}
@@ -558,28 +598,28 @@ const PollsAdmin = () => {
               </div>
 
               {/* Detailed Stats Table */}
-              <div className="mt-4">
-                <h4 className="font-semibold text-gray-800 mb-3">Detailed Statistics</h4>
+              <div className="mt-2 sm:mt-3">
+                <h4 className="font-semibold text-gray-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Detailed Statistics</h4>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
+                  <table className="min-w-full text-[10px] sm:text-xs">
                     <thead>
                       <tr className="text-left text-gray-600 border-b">
-                        <th className="py-2 pr-4">Option</th>
-                        <th className="py-2 pr-4">Votes</th>
-                        <th className="py-2 pr-4">Percentage</th>
-                        <th className="py-2 pr-4">Visual</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Option</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Votes</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Percentage</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Visual</th>
                       </tr>
                     </thead>
                     <tbody>
                 {poll.optionStats?.map((op, i) => (
                         <tr key={i} className="border-b">
-                          <td className="py-2 pr-4 font-medium">{op.label}</td>
-                          <td className="py-2 pr-4">{op.votes}</td>
-                          <td className="py-2 pr-4">{percent(op.votes, poll.votes)}%</td>
-                          <td className="py-2 pr-4">
-                            <div className="w-32 h-2 bg-gray-100 rounded">
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3 font-medium">{op.label}</td>
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">{op.votes}</td>
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">{percent(op.votes, poll.votes)}%</td>
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">
+                            <div className="w-20 sm:w-24 md:w-32 h-1 sm:h-1.5 bg-gray-100 rounded">
                               <div
-                                className="h-2 rounded"
+                                className="h-1 sm:h-1.5 rounded"
                                 style={{ 
                                   width: `${percent(op.votes, poll.votes)}%`,
                                   backgroundColor: chartData[i]?.fill || '#3b82f6'
@@ -594,9 +634,9 @@ const PollsAdmin = () => {
                 </div>
               </div>
 
-              <div className="modal-action mt-6">
+              <div className="modal-action mt-3 sm:mt-4">
                 <form method="dialog">
-                  <button className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200">Close</button>
+                  <button className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 text-[10px] sm:text-xs">Close</button>
                 </form>
               </div>
             </div>
@@ -607,19 +647,19 @@ const PollsAdmin = () => {
       {/* Category Create Modal */}
       <dialog id="poll-category-modal" className="modal">
         <div className="modal-box max-w-md">
-          <h3 className="font-bold text-lg mb-2">নতুন ক্যাটাগরি তৈরি</h3>
-          <p className="text-sm text-gray-600 mb-4">উদাহরণ: ইউনিয়ন নির্বাচন, সিটি কর্পোরেশন</p>
-          <form method="dialog" className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+          <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1.5 sm:mb-2">নতুন ক্যাটাগরি তৈরি</h3>
+          <p className="text-[10px] sm:text-xs text-gray-600 mb-2 sm:mb-3">উদাহরণ: ইউনিয়ন নির্বাচন, সিটি কর্পোরেশন</p>
+          <form method="dialog" className="space-y-1.5 sm:space-y-2" onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
-              className="w-full border rounded-md px-3 py-2"
+              className="w-full border rounded-md px-2 py-1.5 sm:py-2 text-xs sm:text-sm"
               placeholder="ক্যাটাগরির নাম"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
             />
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2 pt-1.5 sm:pt-2">
               <button
-                className="px-4 py-2 rounded-md bg-gray-100"
+                className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-gray-100 text-[10px] sm:text-xs"
                 onClick={() => {
                   setNewCategoryName("");
                   window.document.getElementById('poll-category-modal').close();
@@ -628,7 +668,7 @@ const PollsAdmin = () => {
                 বাতিল
               </button>
               <button
-                className="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50"
+                className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-blue-600 text-white disabled:opacity-50 text-[10px] sm:text-xs"
                 disabled={!newCategoryName.trim()}
                 onClick={() => {
                   const name = newCategoryName.trim();
@@ -653,15 +693,15 @@ const PollsAdmin = () => {
 };
 
 const SummaryCard = ({ label, value, icon, gradient, bgColor }) => (
-  <div className="bg-white rounded-3xl shadow-xl border-2 border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-    <div className={`bg-gradient-to-br ${gradient} p-6 text-white`}>
-      <div className="flex items-center justify-between mb-4">
-        <div className={`${bgColor} p-4 rounded-2xl bg-white/20 backdrop-blur-sm`}>
+  <div className="bg-white rounded-lg sm:rounded-xl shadow-lg border-2 border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+    <div className={`bg-gradient-to-br ${gradient} p-2 sm:p-3 md:p-4 text-white`}>
+      <div className="flex items-center justify-between mb-2 sm:mb-3">
+        <div className={`${bgColor} p-1.5 sm:p-2 md:p-2.5 rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm`}>
           {icon}
         </div>
       </div>
-      <div className="text-3xl font-bold mb-2">{String(value)}</div>
-      <div className="text-sm font-medium text-white/90 uppercase tracking-wide">{label}</div>
+      <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-0.5 sm:mb-1">{String(value)}</div>
+      <div className="text-[10px] sm:text-xs font-medium text-white/90 uppercase tracking-wide">{label}</div>
     </div>
   </div>
 );

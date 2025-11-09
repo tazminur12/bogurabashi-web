@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
 
@@ -8,6 +9,28 @@ function ProgressBar({ percent, color }) {
       <div className={`h-2.5 ${color}`} style={{ width: `${percent}%` }} />
     </div>
   );
+}
+
+// Simple cookie helpers as a backup to localStorage so users can't easily vote twice
+function setCookie(name, value, days = 3650) { // ~10 years
+  try {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+  } catch (error) {
+    console.debug('setCookie failed', error);
+  }
+}
+
+function getCookie(name) {
+  try {
+    const match = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(name + '='));
+    return match ? decodeURIComponent(match.split('=')[1]) : null;
+  } catch (error) {
+    console.debug('getCookie failed', error);
+    return null;
+  }
 }
 
 function formatTimeAgo(dateString) {
@@ -27,8 +50,29 @@ function formatTimeAgo(dateString) {
 
 function useLocalVoteGuard(pollId) {
   const storageKey = `poll-vote-${pollId}`;
-  const hasVoted = useMemo(() => !!localStorage.getItem(storageKey), [storageKey]);
-  const markVoted = () => localStorage.setItem(storageKey, 'true');
+  const [hasVoted, setHasVoted] = useState(false);
+
+  useEffect(() => {
+    let voted = false;
+    try {
+      if (localStorage.getItem(storageKey)) voted = true;
+    } catch (error) {
+      console.debug('localStorage read failed', error);
+    }
+    if (!voted && getCookie(storageKey) === 'true') voted = true;
+    setHasVoted(voted);
+  }, [storageKey]);
+
+  const markVoted = () => {
+    try {
+      localStorage.setItem(storageKey, 'true');
+    } catch (error) {
+      console.debug('localStorage write failed', error);
+    }
+    setCookie(storageKey, 'true');
+    setHasVoted(true);
+  };
+
   return { hasVoted, markVoted };
 }
 
@@ -144,7 +188,14 @@ function PollCard({ poll, onRefetch }) {
       {!hasVoted && poll.status === 'Active' ? (
         <div className="space-y-2">
           {optionStats.map((op) => (
-            <label key={op.label} className="group flex items-center gap-3 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+            <label
+              key={op.label}
+              className={`group flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
+                selected === op.label
+                  ? 'bg-blue-50 border-blue-300 ring-1 ring-blue-100'
+                  : 'border-gray-200 hover:bg-gray-50'
+              }`}
+            >
               <span className="relative flex h-4 w-4 items-center justify-center">
                 <input
                   type="radio"
@@ -157,7 +208,7 @@ function PollCard({ poll, onRefetch }) {
                   <span className="h-2 w-2 rounded-full bg-blue-600 opacity-0 peer-checked:opacity-100 transition-opacity" />
                 </span>
               </span>
-              <span className="text-gray-800 text-[15px]">{op.label}</span>
+              <span className={`text-[15px] ${selected === op.label ? 'text-blue-800 font-medium' : 'text-gray-800'}`}>{op.label}</span>
             </label>
           ))}
           <button
@@ -295,7 +346,17 @@ function Polls() {
 
         {polls.map((poll) => (
           <div key={poll._id || poll.id} className="bg-gradient-to-br from-sky-50 to-indigo-50 rounded-2xl p-1">
-            <PollCard poll={poll} onRefetch={fetchPolls} />
+            <div className="relative">
+              <PollCard poll={poll} onRefetch={fetchPolls} />
+              <div className="px-4 pb-4 -mt-2">
+                <Link
+                  to={`/election/polls/${poll._id || poll.id}`}
+                  className="inline-flex items-center gap-2 text-[13px] px-3 py-1.5 rounded-lg border border-blue-200 bg-white hover:bg-blue-50 text-blue-700"
+                >
+                  ভিউ বিস্তারিত
+                </Link>
+              </div>
+            </div>
           </div>
         ))}
       </div>

@@ -192,6 +192,7 @@ const AddNews = () => {
               >
                 <option value="">-- ক্যাটাগরি নির্বাচন করুন --</option>
                 <option value="রাজনীতি">রাজনীতি</option>
+                <option value="নির্বাচন">নির্বাচন</option>
                 <option value="খেলাধুলা">খেলাধুলা</option>
                 <option value="প্রযুক্তি">প্রযুক্তি</option>
                 <option value="বিনোদন">বিনোদন</option>

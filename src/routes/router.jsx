@@ -160,6 +160,7 @@ import DisasterAdmin from "../pages/Dashboard/DisasterAdmin/DisasterAdmin";
 import DisasterDetails from "../pages/AllServicePage/Disaster/DisasterDetails";
 import ElectionCenter from "../pages/Election/ElectionCenter";
 import Polls from "../pages/Election/Polls";
+import PollDetails from "../pages/Election/PollDetails";
 import Candidates from "../pages/Election/Candidates";
 import CandidateDetails from "../pages/Election/CandidateDetails";
 import Assistance from "../pages/Election/Assistance";
@@ -254,6 +255,7 @@ const router = createBrowserRouter([
       // Election & Civic Center
       { path: "election", element: <ElectionCenter /> },
       { path: "election/polls", element: <Polls /> },
+      { path: "election/polls/:id", element: <PollDetails /> },
       { path: "election/candidates", element: <Candidates /> },
       { path: "election/candidates/:id", element: <CandidateDetails /> },
       { path: "election/assistance", element: <Assistance /> },

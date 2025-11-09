@@ -221,23 +221,23 @@ const ManagePolls = () => {
   }, [selectedPoll]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-7xl mx-auto px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Manage Polls</h2>
-          <p className="text-gray-600 mt-1">সব পোল দেখুন, সম্পাদনা করুন এবং ফলাফল দেখুন</p>
+          <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800">Manage Polls</h2>
+          <p className="text-gray-600 mt-0.5 text-xs sm:text-sm">সব পোল দেখুন, সম্পাদনা করুন এবং ফলাফল দেখুন</p>
         </div>
         <Link
           to="/dashboard/election-polls"
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded-md sm:rounded-lg hover:bg-blue-700 transition text-xs sm:text-sm"
         >
-          <FaPlus /> নতুন পোল তৈরি করুন
+          <FaPlus className="text-xs sm:text-sm" /> <span className="text-xs sm:text-sm">নতুন পোল তৈরি করুন</span>
         </Link>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5 md:gap-3 mb-3 sm:mb-4 md:mb-6">
         <StatCard label="মোট পোল" value={stats.totalPolls} icon={<FaChartBar />} color="blue" />
         <StatCard label="সক্রিয় পোল" value={stats.activePolls} icon={<FaChartBar />} color="green" />
         <StatCard label="আসন্ন পোল" value={stats.upcomingPolls} icon={<FaCalendarAlt />} color="yellow" />
@@ -245,20 +245,20 @@ const ManagePolls = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5 md:gap-3">
           <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-2 sm:left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs sm:text-sm" />
             <input
               type="text"
               placeholder="পোল খুঁজুন..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-8 sm:pl-9 md:pl-10 pr-2 sm:pr-3 md:pr-4 py-1.5 sm:py-2 border border-gray-300 rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
           <select
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
@@ -268,7 +268,7 @@ const ManagePolls = () => {
             <option value="Upcoming">Upcoming</option>
           </select>
           <select
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
           >
@@ -283,7 +283,7 @@ const ManagePolls = () => {
               setFilterStatus("");
               setFilterCategory("");
             }}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+            className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-100 text-gray-700 rounded-md sm:rounded-lg hover:bg-gray-200 transition text-xs sm:text-sm"
           >
             Reset
           </button>
@@ -296,25 +296,25 @@ const ManagePolls = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   প্রশ্ন
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Start Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   End Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Total Votes
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-3 md:px-4 lg:px-6 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -322,19 +322,19 @@ const ManagePolls = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredPolls.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12 text-center text-gray-500">
                     {polls.length === 0 ? (
                       <div>
-                        <p className="text-lg mb-2">কোনো পোল নেই</p>
+                        <p className="text-sm sm:text-base md:text-lg mb-1 sm:mb-2">কোনো পোল নেই</p>
                         <Link
                           to="/dashboard/election-polls"
-                          className="text-blue-600 hover:underline"
+                          className="text-blue-600 hover:underline text-xs sm:text-sm"
                         >
                           প্রথম পোল তৈরি করুন
                         </Link>
                       </div>
                     ) : (
-                      "কোনো ফলাফল পাওয়া যায়নি"
+                      <span className="text-xs sm:text-sm">কোনো ফলাফল পাওয়া যায়নি</span>
                     )}
                   </td>
                 </tr>
@@ -345,27 +345,27 @@ const ManagePolls = () => {
                   
                   return (
                     <tr key={poll._id || poll.id} className="hover:bg-gray-50 transition">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 max-w-md truncate">
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4">
+                        <div className="text-xs sm:text-sm font-medium text-gray-900 max-w-xs sm:max-w-md truncate">
                           {poll.question}
                         </div>
                         {poll.description && (
-                          <div className="text-xs text-gray-500 mt-1 max-w-md truncate">
+                          <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1 max-w-xs sm:max-w-md truncate">
                             {poll.description}
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap">
                         {poll.category ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                            <FaTag /> {poll.category}
+                          <span className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs bg-blue-100 text-blue-800">
+                            <FaTag className="text-[10px]" /> {poll.category}
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-xs">—</span>
+                          <span className="text-gray-400 text-[10px] sm:text-xs">—</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium ${
                           poll.status === "Active" ? "bg-green-100 text-green-800" : 
                           poll.status === "Upcoming" ? "bg-blue-100 text-blue-800" : 
                           "bg-gray-100 text-gray-800"
@@ -373,43 +373,46 @@ const ManagePolls = () => {
                           {poll.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                         {formatDate(startDate)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                         {formatDate(endDate)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-medium text-gray-900">
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap">
+                        <span className="text-xs sm:text-sm font-medium text-gray-900">
                           {poll.votes || 0}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center gap-2">
+                      <td className="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
                           <button
                             onClick={() => handleViewResult(poll)}
-                            className="p-2 text-indigo-600 hover:bg-indigo-50 rounded transition"
+                            className="p-1 sm:p-1.5 md:p-2 text-indigo-600 hover:bg-indigo-50 rounded transition"
                             title="View Result"
                           >
-                            <FaEye />
+                            <FaEye className="text-xs sm:text-sm" />
                           </button>
                           <Link
                             to={`/dashboard/election-polls`}
                             onClick={() => {
                               // Store poll ID in sessionStorage to edit in PollsAdmin
-                              sessionStorage.setItem('editPollId', poll.id);
+                              const pollId = poll._id || poll.id;
+                              if (pollId) {
+                                sessionStorage.setItem('editPollId', String(pollId));
+                              }
                             }}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition"
+                            className="p-1 sm:p-1.5 md:p-2 text-blue-600 hover:bg-blue-50 rounded transition"
                             title="Edit"
                           >
-                            <FaEdit />
+                            <FaEdit className="text-xs sm:text-sm" />
                           </Link>
                           <button
                             onClick={() => handleDelete(poll)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded transition"
+                            className="p-1 sm:p-1.5 md:p-2 text-red-600 hover:bg-red-50 rounded transition"
                             title="Delete"
                           >
-                            <FaTrash />
+                            <FaTrash className="text-xs sm:text-sm" />
                           </button>
                         </div>
                       </td>
@@ -425,17 +428,17 @@ const ManagePolls = () => {
       {/* Result Modal */}
       <dialog id="result-modal" className="modal">
         <div className="modal-backdrop" onClick={() => window.document.getElementById('result-modal').close()}></div>
-        <div className="modal-box max-w-4xl">
+        <div className="modal-box max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedPoll && (
             <>
-              <h3 className="font-bold text-xl mb-2">{selectedPoll.question}</h3>
+              <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1.5 sm:mb-2">{selectedPoll.question}</h3>
               {selectedPoll.description && (
-                <p className="text-gray-600 mb-2 text-sm">{selectedPoll.description}</p>
+                <p className="text-gray-600 mb-1.5 sm:mb-2 text-[10px] sm:text-xs">{selectedPoll.description}</p>
               )}
-              <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-3 mb-2 sm:mb-3 md:mb-4 text-[10px] sm:text-xs text-gray-600">
                 <span>শ্রেণি: {selectedPoll.category || "—"}</span>
                 <span>•</span>
-                <span className={`px-2 py-1 rounded-full text-xs ${
+                <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs ${
                   selectedPoll.status === "Active" ? "bg-green-100 text-green-700" : 
                   selectedPoll.status === "Upcoming" ? "bg-blue-100 text-blue-700" : 
                   "bg-gray-100 text-gray-700"
@@ -447,12 +450,12 @@ const ManagePolls = () => {
               </div>
 
               {/* Charts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3 my-2 sm:my-3 md:my-4">
                 {/* Pie Chart */}
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-3">Pie Chart</h4>
+                  <h4 className="font-semibold text-gray-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Pie Chart</h4>
                   {chartData.length > 0 && selectedPoll.votes > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]">
                       <PieChart>
                         <Pie
                           data={chartData}
@@ -460,7 +463,7 @@ const ManagePolls = () => {
                           cy="50%"
                           labelLine={false}
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
+                          outerRadius={55}
                           fill="#8884d8"
                           dataKey="value"
                         >
@@ -473,7 +476,7 @@ const ManagePolls = () => {
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-[300px] text-gray-500">
+                    <div className="flex items-center justify-center h-[200px] sm:h-[250px] text-gray-500 text-xs sm:text-sm">
                       No votes yet
                     </div>
                   )}
@@ -481,13 +484,13 @@ const ManagePolls = () => {
 
                 {/* Bar Chart */}
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-3">Bar Chart</h4>
+                  <h4 className="font-semibold text-gray-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Bar Chart</h4>
                   {chartData.length > 0 && selectedPoll.votes > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]">
                       <BarChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                        <YAxis />
+                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={50} className="sm:h-[60px]" fontSize={10} />
+                        <YAxis fontSize={10} />
                         <Tooltip formatter={(value) => [`${value} votes`, '']} />
                         <Legend />
                         <Bar dataKey="value" fill="#3b82f6">
@@ -498,7 +501,7 @@ const ManagePolls = () => {
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-[300px] text-gray-500">
+                    <div className="flex items-center justify-center h-[200px] sm:h-[250px] text-gray-500 text-xs sm:text-sm">
                       No votes yet
                     </div>
                   )}
@@ -506,28 +509,28 @@ const ManagePolls = () => {
               </div>
 
               {/* Detailed Stats Table */}
-              <div className="mt-4">
-                <h4 className="font-semibold text-gray-800 mb-3">Detailed Statistics</h4>
+              <div className="mt-2 sm:mt-3">
+                <h4 className="font-semibold text-gray-800 mb-1.5 sm:mb-2 text-xs sm:text-sm">Detailed Statistics</h4>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
+                  <table className="min-w-full text-[10px] sm:text-xs">
                     <thead>
                       <tr className="text-left text-gray-600 border-b">
-                        <th className="py-2 pr-4">Option</th>
-                        <th className="py-2 pr-4">Votes</th>
-                        <th className="py-2 pr-4">Percentage</th>
-                        <th className="py-2 pr-4">Visual</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Option</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Votes</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Percentage</th>
+                        <th className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">Visual</th>
                       </tr>
                     </thead>
                     <tbody>
                       {selectedPoll.optionStats?.map((op, i) => (
                         <tr key={i} className="border-b">
-                          <td className="py-2 pr-4 font-medium">{op.label}</td>
-                          <td className="py-2 pr-4">{op.votes}</td>
-                          <td className="py-2 pr-4">{percent(op.votes, selectedPoll.votes)}%</td>
-                          <td className="py-2 pr-4">
-                            <div className="w-32 h-2 bg-gray-100 rounded">
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3 font-medium">{op.label}</td>
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">{op.votes}</td>
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">{percent(op.votes, selectedPoll.votes)}%</td>
+                          <td className="py-1 sm:py-1.5 pr-1.5 sm:pr-2 md:pr-3">
+                            <div className="w-20 sm:w-24 md:w-32 h-1 sm:h-1.5 bg-gray-100 rounded">
                               <div
-                                className="h-2 rounded"
+                                className="h-1 sm:h-1.5 rounded"
                                 style={{ 
                                   width: `${percent(op.votes, selectedPoll.votes)}%`,
                                   backgroundColor: chartData[i]?.fill || '#3b82f6'
@@ -544,9 +547,9 @@ const ManagePolls = () => {
             </>
           )}
 
-          <div className="modal-action mt-6">
+          <div className="modal-action mt-3 sm:mt-4">
             <form method="dialog">
-              <button className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200">Close</button>
+              <button className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 text-[10px] sm:text-xs">Close</button>
             </form>
           </div>
         </div>
@@ -564,14 +567,14 @@ const StatCard = ({ label, value, icon, color }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 sm:p-3 md:p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600">{label}</p>
-          <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
+          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">{label}</p>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-0.5 sm:mt-1">{value}</p>
         </div>
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          {icon}
+        <div className={`p-1.5 sm:p-2 md:p-2.5 rounded-lg ${colorClasses[color]}`}>
+          <div className="text-sm sm:text-base md:text-lg">{icon}</div>
         </div>
       </div>
     </div>

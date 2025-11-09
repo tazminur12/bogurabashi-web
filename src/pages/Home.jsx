@@ -81,20 +81,7 @@ function Home() {
   });
 
   // Fetch events from backend
-  const {
-    data: events = [],
-    isLoading: eventsLoading,
-  } = useQuery({
-    queryKey: ["home-events"],
-    queryFn: async () => {
-      const res = await axiosSecure.get("/events");
-      // Filter upcoming events and sort by date, limit to 3
-      return res.data
-        .filter(event => event.status === "Upcoming")
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .slice(0, 3);
-    },
-  });
+  // (Removed Upcoming Events section)
 
   // Fetch ads from backend
   const {
@@ -120,72 +107,7 @@ function Home() {
     .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
     .slice(0, 3);
 
-  // Helper function to format date
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString('bn-BD', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  // Helper function to get category icon
-  const getCategoryIcon = (category) => {
-    switch (category) {
-      case "Cultural":
-        return "🎭";
-      case "Sports":
-        return "⚽";
-      case "Educational":
-        return "📚";
-      case "Business":
-        return "💼";
-      case "Religious":
-        return "🕊️";
-      case "Social":
-        return "👥";
-      case "Entertainment":
-        return "🎪";
-      case "Technology":
-        return "💻";
-      case "Health":
-        return "🏥";
-      case "Environment":
-        return "🌱";
-      default:
-        return "📅";
-    }
-  };
-
-  // Helper function to get category color
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case "Cultural":
-        return "bg-purple-100 text-purple-700";
-      case "Sports":
-        return "bg-green-100 text-green-700";
-      case "Educational":
-        return "bg-blue-100 text-blue-700";
-      case "Business":
-        return "bg-gray-100 text-gray-700";
-      case "Religious":
-        return "bg-yellow-100 text-yellow-700";
-      case "Social":
-        return "bg-pink-100 text-pink-700";
-      case "Entertainment":
-        return "bg-red-100 text-red-700";
-      case "Technology":
-        return "bg-indigo-100 text-indigo-700";
-      case "Health":
-        return "bg-emerald-100 text-emerald-700";
-      case "Environment":
-        return "bg-teal-100 text-teal-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+  // (Removed event helper utilities)
 
   // District statistics
   const districtStats = [
@@ -369,9 +291,9 @@ function Home() {
       {/* News & Events Section */}
       <Motion.section variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="py-16 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* News Section */}
-            <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
+            {/* News Section - full width */}
+            <div>
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                   <FaNewspaper className="w-8 h-8 text-blue-600" />
@@ -387,7 +309,7 @@ function Home() {
                 </div>
               ) : filteredNews.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     {filteredNews.map(news => (
                       <div
                         key={news._id}
@@ -476,58 +398,6 @@ function Home() {
                   <p className="text-gray-500 text-lg">কোনো নিউজ পাওয়া যায়নি</p>
                 </div>
               )}
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Upcoming Events */}
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <div className="flex items-center mb-6">
-                  <FaCalendarAlt className="text-blue-600 mr-3" size={20} />
-                  <h3 className="text-2xl font-bold text-gray-800">আসন্ন ইভেন্ট</h3>
-                </div>
-                <div className="space-y-4">
-                  {eventsLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-                      <span className="ml-3 text-gray-600">ইভেন্ট লোড হচ্ছে...</span>
-                    </div>
-                  ) : events.length > 0 ? (
-                    events.map(event => (
-                      <div key={event._id} className="border-b border-gray-200 pb-4 last:border-b-0">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-lg text-gray-800 mb-2">{event.title}</h4>
-                            <div className="flex items-center text-gray-600 text-sm mb-1">
-                              <FaCalendarAlt className="mr-2" />
-                              <span>{formatDate(event.date)}</span>
-                            </div>
-                            <div className="flex items-center text-gray-600 text-sm mb-2">
-                              <FaMapMarkerAlt className="mr-2" />
-                              <span>{event.location}</span>
-                            </div>
-                            <span className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${getCategoryColor(event.category)}`}>
-                              {getCategoryIcon(event.category)} {event.category}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-gray-500 text-lg">কোনো আসন্ন ইভেন্ট পাওয়া যায়নি</p>
-                    </div>
-                  )}
-                </div>
-                <Link 
-                  to="/events" 
-                  className="inline-flex mt-6 text-blue-600 hover:text-blue-800 font-medium items-center"
-                >
-                  সব ইভেন্ট দেখুন <FaArrowRight className="ml-2" />
-                </Link>
-              </div>
-
-
             </div>
           </div>
         </div>

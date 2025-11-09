@@ -12,10 +12,9 @@ function ElectionNews() {
       try {
         const res = await axiosSecure.get('/news');
         const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
-        // Prefer category/tag filter if present, else show latest 9
-        const filtered = list.filter((n) => (n.category || '').toLowerCase().includes('election'));
-        const finalList = filtered.length > 0 ? filtered : list;
-        return finalList
+        // শুধুমাত্র "নির্বাচন" ক্যাটাগরির নিউজ দেখাবে
+        const filtered = list.filter((n) => n.category === 'নির্বাচন');
+        return filtered
           .filter((n) => n.status === 'Published')
           .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
           .slice(0, 9);
