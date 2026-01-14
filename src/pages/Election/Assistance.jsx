@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const MOCK_CENTERS = [
   { id: 'pc-01', name: 'শহীদ জিয়াউর রহমান কলেজ', area: 'সদর', map: 'https://maps.google.com' },
@@ -8,6 +9,7 @@ const MOCK_CENTERS = [
 
 function Assistance() {
   const [q, setQ] = useState('');
+  usePageTitle('ভোটার সহায়তা ও ভোট কেন্দ্র | বগুড়াবাসী – Bogurabashi');
   const results = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return MOCK_CENTERS;

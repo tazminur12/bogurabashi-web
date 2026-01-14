@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow admin-only dashboard routes from being indexed
+Disallow: /dashboard/
+
+# Sitemap location (update domain if different)
+Sitemap: https://bogurabashi.com/sitemap.xml
+

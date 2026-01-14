@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../hooks/useAxiosSecure';
+import usePageTitle from '../hooks/usePageTitle';
 import { 
   FaSearch, 
   FaFilter, 
@@ -27,6 +28,7 @@ import {
 
 const AdsPage = () => {
   const axiosSecure = useAxiosSecure();
+  usePageTitle('বিজ্ঞাপন ও অফার | Bogura Ads | বগুড়াবাসী – Bogurabashi');
   
   // State for filtering and search
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useSecureAxios from "../hooks/useAxiosSecure";
+import usePageTitle from "../hooks/usePageTitle";
 import { 
   FaExternalLinkAlt, 
   FaMapMarkerAlt, 
@@ -59,6 +60,8 @@ const OurBogura = () => {
 
     fetchFamousPeople();
   }, [axiosSecure]);
+
+  usePageTitle("বগুড়া জেলা পরিচিতি | Our Bogura | বগুড়াবাসী – Bogurabashi");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">

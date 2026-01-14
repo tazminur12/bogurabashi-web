@@ -43,6 +43,7 @@ import {
 import { WiDaySunny, WiRain, WiCloudy } from 'weather-icons-react';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../hooks/useAxiosSecure';
+import usePageTitle from '../hooks/usePageTitle';
 import Slider from '../components/Slider';
 import ServiceCard from '../components/ServiceCard';
 import AdsSlider from '../components/AdsSlider';
@@ -51,11 +52,7 @@ const reveal = { hidden:{opacity:0, y:20}, visible:{opacity:1, y:0, transition:{
 
 function Home() {
   const axiosSecure = useAxiosSecure();
-  
-
-  
-
-
+  usePageTitle('বগুড়াবাসী – Bogurabashi | বগুড়া জেলার সব সেবা ও তথ্য');
   // Fetch news from backend
   const {
     data: news = [],

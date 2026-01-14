@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import usePageTitle from '../hooks/usePageTitle';
 import {
   FaBullseye,
   FaHandsHelping,
@@ -22,6 +23,7 @@ import aboutImg from '../assets/bogura.png';
 const _MOTION_USED = motion;
 
 const About = () => {
+  usePageTitle('আমাদের সম্পর্কে | বগুড়াবাসী – Bogurabashi');
   const features = [
     {
       icon: <FaBullseye className="text-blue-600 text-3xl" />,

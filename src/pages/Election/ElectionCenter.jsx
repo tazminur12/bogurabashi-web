@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import usePageTitle from '../../hooks/usePageTitle';
 
 function ElectionCenter() {
+  usePageTitle('ত্রয়োদশ জাতীয় সংসদ নির্বাচন কেন্দ্র | বগুড়াবাসী – Bogurabashi');
+
   // নির্বাচনের তারিখ (পরিবর্তনযোগ্য) - ১৫ ফেব্রুয়ারি ২০২৬, সকাল ৮:০০
   const electionDate = useMemo(() => new Date('2026-02-15T08:00:00'), []);
   

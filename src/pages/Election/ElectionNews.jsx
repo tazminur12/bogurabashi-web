@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import usePageTitle from '../../hooks/usePageTitle';
 
 function ElectionNews() {
   const axiosSecure = useAxiosSecure();
+  usePageTitle('নির্বাচন সংবাদ ও আপডেট | বগুড়াবাসী – Bogurabashi');
 
   const { data: news = [], isLoading } = useQuery({
     queryKey: ['election-news'],

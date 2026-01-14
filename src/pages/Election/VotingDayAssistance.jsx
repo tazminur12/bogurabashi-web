@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import usePageTitle from '../../hooks/usePageTitle';
 
 function VotingDayAssistance() {
+  usePageTitle('ভোট দিবস সহায়তা ও নিয়মাবলী | বগুড়াবাসী – Bogurabashi');
   // ভোট কেন্দ্রের নিয়মাবলী
   const pollingCenterRules = [
     {

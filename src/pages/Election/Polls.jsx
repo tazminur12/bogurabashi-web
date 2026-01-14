@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import usePageTitle from '../../hooks/usePageTitle';
 import Swal from 'sweetalert2';
 
 function ProgressBar({ percent, color }) {
@@ -293,6 +294,8 @@ function Polls() {
     fetchPolls();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  usePageTitle('নির্বাচন জরিপ (Polls) | বগুড়াবাসী – Bogurabashi');
 
   return (
     <div className="max-w-5xl mx-auto px-3 py-8">

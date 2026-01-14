@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import usePageTitle from "../hooks/usePageTitle";
 import { useParams, Link } from "react-router-dom";
 import { FaCalendarAlt, FaUser, FaTag, FaArrowLeft, FaShare, FaPrint } from "react-icons/fa";
 
@@ -20,6 +21,12 @@ const NewsDetails = () => {
     },
     enabled: !!id,
   });
+
+  usePageTitle(
+    newsItem?.title
+      ? `${newsItem.title} | সংবাদ বিস্তারিত | বগুড়াবাসী`
+      : "সংবাদ বিস্তারিত | বগুড়াবাসী – Bogurabashi"
+  );
 
   // Fetch related news (same category)
   const {

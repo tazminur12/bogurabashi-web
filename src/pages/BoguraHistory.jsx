@@ -1,7 +1,9 @@
 import React from "react";
 import { FaMapMarkerAlt, FaUsers, FaIndustry, FaGraduationCap, FaLeaf, FaLandmark, FaBook, FaHeart } from "react-icons/fa";
+import usePageTitle from "../hooks/usePageTitle";
 
 const BoguraHistory = () => {
+  usePageTitle("বগুড়ার ইতিহাস | Bogura History | বগুড়াবাসী – Bogurabashi");
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Hero Section */}

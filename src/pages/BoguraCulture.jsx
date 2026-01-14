@@ -19,8 +19,10 @@ import {
   FaMapMarkerAlt,
   FaTrophy
 } from "react-icons/fa";
+import usePageTitle from "../hooks/usePageTitle";
 
 const BoguraCulture = () => {
+  usePageTitle("বগুড়ার সংস্কৃতি | Bogura Culture | বগুড়াবাসী – Bogurabashi");
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
       {/* Hero Section */}

@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import usePageTitle from '../../hooks/usePageTitle';
 
 function CandidateCard({ candidate, onView }) {
   const partyDisplay = candidate.isIndependent ? 'স্বতন্ত্র' : (candidate.party || 'দল নেই');
@@ -225,6 +226,8 @@ function Candidates() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const axiosSecure = useAxiosSecure();
+
+  usePageTitle('প্রার্থী তথ্য | জাতীয় সংসদ নির্বাচন | বগুড়াবাসী – Bogurabashi');
 
   // Fetch candidates from API
   useEffect(() => {

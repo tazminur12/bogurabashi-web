@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import usePageTitle from '../hooks/usePageTitle';
 import { FaHome, FaInfoCircle, FaPhone, FaNewspaper, FaExclamationTriangle, FaMapMarkerAlt, FaUserFriends, FaGraduationCap, FaHospital, FaAmbulance, FaShieldAlt, FaBus, FaTrain, FaCar, FaUtensils, FaCalendarAlt, FaBlog, FaAd, FaUsers, FaEye, FaPlus } from 'react-icons/fa';
 
 const Sitemap = () => {
+  usePageTitle('সাইটম্যাপ (Sitemap) | বগুড়াবাসী – Bogurabashi');
   const mainSections = [
     {
       title: "🏠 মূল পেজ",

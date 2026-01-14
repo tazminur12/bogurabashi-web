@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import usePageTitle from "../hooks/usePageTitle";
 import { Link } from "react-router-dom";
 import { 
   FaCalendarAlt, 
@@ -18,6 +19,7 @@ import {
 
 const News = () => {
   const axiosSecure = useAxiosSecure();
+  usePageTitle("বগুড়া সংবাদ | বগুড়াবাসী – Bogurabashi");
   const [selectedCategory, setSelectedCategory] = useState("সব");
   const [searchTerm, setSearchTerm] = useState("");
 

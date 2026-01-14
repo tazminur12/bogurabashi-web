@@ -1,4 +1,5 @@
 import React from 'react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 // Simple mock insight data
 const INSIGHTS = {
@@ -31,6 +32,8 @@ function Bar({ label, value, color }) {
 }
 
 function Insights() {
+  usePageTitle('জনমত বিশ্লেষণ (Insights) | নির্বাচন | বগুড়াবাসী – Bogurabashi');
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       <div className="mb-6">

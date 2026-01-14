@@ -1,4 +1,5 @@
 import React from 'react';
+import usePageTitle from '../hooks/usePageTitle';
 import {
   FaHeartbeat, FaHospital, FaUserMd, FaAmbulance, FaFireExtinguisher,
   FaShieldAlt, FaGavel, FaNewspaper, FaBus, FaTrain, FaCar, FaBox, FaBolt,
@@ -195,6 +196,7 @@ const allServices = [
 
 // ✅ Component
 const AllService = () => {
+  usePageTitle('সব সেবা একসাথে | Bogura All Services | বগুড়াবাসী');
   return (
     <div className="py-12 px-4 md:px-16 bg-white">
       <div className="text-center mb-8">
