@@ -6,8 +6,8 @@ import usePageTitle from '../../hooks/usePageTitle';
 function ElectionCenter() {
   usePageTitle('ত্রয়োদশ জাতীয় সংসদ নির্বাচন কেন্দ্র | বগুড়াবাসী – Bogurabashi');
 
-  // নির্বাচনের তারিখ (পরিবর্তনযোগ্য) - ১৫ ফেব্রুয়ারি ২০২৬, সকাল ৮:০০
-  const electionDate = useMemo(() => new Date('2026-02-15T08:00:00'), []);
+  // নির্বাচনের তারিখ (পরিবর্তনযোগ্য) - ১২ ফেব্রুয়ারি ২০২৬, সকাল ৮:০০
+  const electionDate = useMemo(() => new Date('2026-02-12T08:00:00'), []);
   
   // কাউন্টডাউন টাইমার স্টেট
   const [daysRemaining, setDaysRemaining] = useState(0);
@@ -420,11 +420,11 @@ function ElectionCenter() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
               <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-100">
                 <div className="text-sm text-gray-500 mb-1">নির্বাচনের তারিখ</div>
-                <div className="text-lg font-semibold text-gray-900">১৫ ফেব্রুয়ারি, ২০২৬</div>
+                <div className="text-lg font-semibold text-gray-900">১২ ফেব্রুয়ারি, ২০২৬</div>
               </div>
               <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-100">
                 <div className="text-sm text-gray-500 mb-1">ভোটের সময়</div>
-                <div className="text-lg font-semibold text-gray-900">সকাল ৮:০০ - বিকাল ৪:০০</div>
+                <div className="text-lg font-semibold text-gray-900">সকাল ৭:০০ - বিকাল ৪:৩০</div>
               </div>
               <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-100">
                 <div className="text-sm text-gray-500 mb-1">নির্বাচনী এলাকা</div>
