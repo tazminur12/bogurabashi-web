@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaUsers, FaNewspaper, FaPoll, FaCogs } from "react-icons/fa";
+import { FaUsers, FaNewspaper, FaPoll, FaCogs, FaChartPie, FaFlag } from "react-icons/fa";
 
 const ElectionAdmin = () => {
   return (
@@ -20,11 +20,27 @@ const ElectionAdmin = () => {
           cta="পাবলিক ভিউ"
         />
         <AdminCard
+          icon={<FaFlag className="text-3xl text-red-600" />}
+          title="দল ব্যবস্থাপনা"
+          desc="দলের নাম, প্রতীক, ও রঙ সেটআপ"
+          to="#"
+          manageTo="/dashboard/election-parties"
+          cta=""
+        />
+        <AdminCard
           icon={<FaPoll className="text-3xl text-violet-600" />}
           title="জরিপ (Polls)"
           desc="পোল কনফিগারেশন ও রেজাল্ট"
           to="/election/polls"
           manageTo="/dashboard/election-polls"
+          cta="পাবলিক ভিউ"
+        />
+        <AdminCard
+          icon={<FaChartPie className="text-3xl text-orange-600" />}
+          title="নির্বাচন ফলাফল"
+          desc="ইউনিয়ন ও কেন্দ্র ভিত্তিক ফলাফল"
+          to="/election/results"
+          manageTo="/dashboard/election-results-list"
           cta="পাবলিক ভিউ"
         />
         <AdminCard

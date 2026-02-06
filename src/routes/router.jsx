@@ -166,7 +166,12 @@ import CandidateDetails from "../pages/Election/CandidateDetails";
 import Assistance from "../pages/Election/Assistance";
 import Insights from "../pages/Election/Insights";
 import ElectionNews from "../pages/Election/ElectionNews";
+import ElectionResults from "../pages/Election/ElectionResults";
 import ElectionAdmin from "../pages/Dashboard/ElectionAdmin/ElectionAdmin";
+import ManageResults from "../pages/Dashboard/ElectionAdmin/ManageResults";
+import ElectionResultsList from "../pages/Dashboard/ElectionAdmin/ElectionResultsList";
+import EditElectionResult from "../pages/Dashboard/ElectionAdmin/EditElectionResult";
+import ManageParties from "../pages/Dashboard/ElectionAdmin/ManageParties";
 import PollsAdmin from "../pages/Dashboard/ElectionAdmin/PollsAdmin";
 import ManagePolls from "../pages/Dashboard/ElectionAdmin/ManagePolls";
 import CandidatesAdmin from "../pages/Dashboard/CandidatesAdmin/CandidatesAdmin";
@@ -259,6 +264,7 @@ const router = createBrowserRouter([
       { path: "election/candidates", element: <Candidates /> },
       { path: "election/candidates/:id", element: <CandidateDetails /> },
       { path: "election/assistance", element: <Assistance /> },
+      { path: "election/results", element: <ElectionResults /> },
       { path: "election/insights", element: <Insights /> },
       { path: "election/news", element: <ElectionNews /> },
       { path: "election/voting-day-assistance", element: <VotingDayAssistance /> },
@@ -598,8 +604,24 @@ const router = createBrowserRouter([
         Component: ElectionAdmin
       },
       {
+        path: "election-results-manage",
+        Component: ManageResults
+      },
+      {
+        path: "election-results-list",
+        Component: ElectionResultsList
+      },
+      {
+        path: "election-results-edit/:id",
+        Component: EditElectionResult
+      },
+      {
         path: "election-candidates",
         Component: CandidatesAdmin
+      },
+      {
+        path: "election-parties",
+        Component: ManageParties
       },
       {
         path: "election-candidates-list",

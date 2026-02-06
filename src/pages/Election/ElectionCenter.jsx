@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import usePageTitle from '../../hooks/usePageTitle';
 
 function ElectionCenter() {
   usePageTitle('ত্রয়োদশ জাতীয় সংসদ নির্বাচন কেন্দ্র | বগুড়াবাসী – Bogurabashi');
+  const axiosSecure = useAxiosSecure();
 
   // নির্বাচনের তারিখ (পরিবর্তনযোগ্য) - ১২ ফেব্রুয়ারি ২০২৬, সকাল ৮:০০
   const electionDate = useMemo(() => new Date('2026-02-12T08:00:00'), []);
@@ -15,15 +17,39 @@ function ElectionCenter() {
   const [minutesRemaining, setMinutesRemaining] = useState(0);
   const [secondsRemaining, setSecondsRemaining] = useState(0);
 
-  // লাইভ নিউজ টিকার ডেটা
-  const newsTicker = [
-    'নির্বাচন কমিশন নতুন ভোটার তালিকা প্রকাশ করেছে',
-    'প্রধানমন্ত্রী নির্বাচনী প্রচারণা শুরু করেছেন',
-    'ভোটার নিবন্ধন প্রক্রিয়া চলমান',
-    'নির্বাচনী আইন সংশোধনের প্রস্তাবনা',
-    'ভোট কেন্দ্রের নিরাপত্তা ব্যবস্থা জোরদার করা হচ্ছে',
-    'নতুন ভোটার গাইডলাইন প্রকাশিত',
-  ];
+  // লাইভ নিউজ টিকার ডেটা (API থেকে)
+  const { data: electionNews = [], isLoading: isNewsLoading } = useQuery({
+    queryKey: ['election-news'],
+    queryFn: async () => {
+      try {
+        const res = await axiosSecure.get('/news');
+        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        // শুধুমাত্র "নির্বাচন" ক্যাটাগরির নিউজ দেখাবে
+        const filtered = list.filter((n) => n.category === 'নির্বাচন');
+        return filtered
+          .filter((n) => n.status === 'Published')
+          .sort((a, b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0))
+          .slice(0, 10); // সর্বশেষ ১০টি খবর
+      } catch (e) {
+        console.error('Election news fetch failed', e);
+        return [];
+      }
+    },
+    retry: 1,
+  });
+
+  // বাংলা সংখ্যা রূপান্তর ফাংশন
+  const toBengaliNumber = (num) => {
+    if (num === null || num === undefined) return '০';
+    return String(num).replace(/[0-9]/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+  };
+
+  // টিকারের জন্য শুধু শিরোনামগুলো নিচ্ছি
+  const newsTicker = isNewsLoading 
+    ? ['খবর লোড হচ্ছে...'] 
+    : electionNews.length > 0 
+      ? electionNews.map(n => n.title) 
+      : ['নির্বাচন সংক্রান্ত কোনো ব্রেকিং নিউজ নেই'];
 
   // কাউন্টডাউন টাইমার ক্যালকুলেশন
   useEffect(() => {
@@ -57,20 +83,15 @@ function ElectionCenter() {
 
   // ডামি ডেটা (পরে API যুক্ত করা যাবে)
   const headlineStats = [
-    { label: 'মোট ভোটার', value: 1254300, delta: +0.8 },
-    { label: 'প্রার্থী সংখ্যা', value: 218, delta: +1.2 },
-    { label: 'ভোট কেন্দ্র', value: 862, delta: 0 },
-    { label: 'টার্নআউট (প্রাক্কলন)', value: 63.4, unit: '%', delta: +2.1 },
+    { label: 'মোট ভোটার', value: 342155 },
+    { label: 'পুরুষ', value: 171497 },
+    { label: 'মহিলা', value: 170653 },
+    { label: 'অন্যান্য', value: 5 },
+    { label: 'মোট প্রার্থী', value: 7 },
+    { label: 'স্বতন্ত্র প্রার্থী', value: 1 },
   ];
 
-  const trendSeries = {
-    turnout: [51, 54, 52, 55, 57, 59, 60, 62, 61, 63, 64],
-    interest: [62, 61, 63, 64, 66, 65, 67, 69, 70, 72, 73],
-    newsMentions: [120, 130, 110, 140, 155, 170, 165, 180, 190, 210, 205],
-  };
-
   // নমুনা পোল ডেটা (API হলে এখানে ফেচ করে সেট করবেন)
-  const axiosSecure = useAxiosSecure();
   const [pollsSummary, setPollsSummary] = useState(null);
   const [pollsSummaryLoading, setPollsSummaryLoading] = useState(true);
   const [pollsSummaryError, setPollsSummaryError] = useState(false);
@@ -105,7 +126,7 @@ function ElectionCenter() {
   const sections = [
     { to: '/election/polls', title: 'নির্বাচন জরিপ', desc: 'ভোট দিন ও ফলাফল দেখুন', emoji: '🗳️' },
     { to: '/election/candidates', title: 'প্রার্থী তথ্য', desc: 'প্রার্থীদের প্রোফাইল দেখুন', emoji: '👤' },
-    { to: '/election/assistance', title: 'ভোটার সহায়তা', desc: 'ভোট কেন্দ্র, সময়সূচি, নির্দেশিকা', emoji: '📍' },
+    { to: '/election/results', title: 'নির্বাচনের ফলাফল', desc: 'লাইভ ভোট গণনা ও ফলাফল', emoji: '🏆' },
     { to: '/election/insights', title: 'জনমত বিশ্লেষণ', desc: 'চার্টে ট্রেন্ড দেখুন', emoji: '📊' },
     { to: '/election/news', title: 'নির্বাচনী আপডেটস (News & Alerts)', desc: 'নির্বাচনের সর্বশেষ খবর', emoji: '📰' },
     { to: '/election/voting-day-assistance', title: 'ভোট দিবস সহায়তা', desc: 'ভোট দিবসের প্রয়োজনীয় তথ্য ও সহায়তা', emoji: '✅' },
@@ -113,28 +134,9 @@ function ElectionCenter() {
 
   const formatNumber = (num) => {
     if (num === null || num === undefined) return '-';
-    if (Math.abs(num) >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (Math.abs(num) >= 1000) return (num / 1000).toFixed(1) + 'k';
-    return String(num);
-  };
-
-  const Sparkline = ({ values, color = '#2563eb' }) => {
-    const width = 160;
-    const height = 48;
-    const max = Math.max(...values);
-    const min = Math.min(...values);
-    const points = values
-      .map((v, i) => {
-        const x = (i / (values.length - 1)) * width;
-        const y = height - ((v - min) / (max - min || 1)) * height;
-        return `${x},${y}`;
-      })
-      .join(' ');
-    return (
-      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden>
-        <polyline fill="none" stroke={color} strokeWidth="2" points={points} />
-      </svg>
-    );
+    // if (Math.abs(num) >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    // if (Math.abs(num) >= 1000) return (num / 1000).toFixed(1) + 'k';
+    return toBengaliNumber(num);
   };
 
   const ProgressBar = ({ value, color = 'bg-blue-600' }) => {
@@ -153,7 +155,7 @@ function ElectionCenter() {
           <div key={row.name} className="">
             <div className="flex items-center justify-between text-sm mb-1">
               <span className="text-gray-700 font-medium">{row.name}</span>
-              <span className="text-gray-600">{row.percent}%</span>
+              <span className="text-gray-600">{toBengaliNumber(row.percent)}%</span>
             </div>
             <div className="w-full h-2.5 bg-gray-100 rounded">
               <div
@@ -225,22 +227,22 @@ function ElectionCenter() {
           </div>
           <div className="flex justify-center items-center gap-1.5 md:gap-2 flex-wrap">
             <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg p-2 md:p-3 min-w-[55px] md:min-w-[65px]">
-              <div className="text-xl md:text-2xl font-bold">{days.toString().padStart(2, '0')}</div>
+              <div className="text-xl md:text-2xl font-bold">{toBengaliNumber(days.toString().padStart(2, '0'))}</div>
               <div className="text-[10px] md:text-xs text-blue-100 mt-0.5">দিন</div>
             </div>
             <div className="text-lg md:text-xl font-bold">:</div>
             <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg p-2 md:p-3 min-w-[55px] md:min-w-[65px]">
-              <div className="text-xl md:text-2xl font-bold">{hours.toString().padStart(2, '0')}</div>
+              <div className="text-xl md:text-2xl font-bold">{toBengaliNumber(hours.toString().padStart(2, '0'))}</div>
               <div className="text-[10px] md:text-xs text-blue-100 mt-0.5">ঘন্টা</div>
             </div>
             <div className="text-lg md:text-xl font-bold">:</div>
             <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg p-2 md:p-3 min-w-[55px] md:min-w-[65px]">
-              <div className="text-xl md:text-2xl font-bold">{minutes.toString().padStart(2, '0')}</div>
+              <div className="text-xl md:text-2xl font-bold">{toBengaliNumber(minutes.toString().padStart(2, '0'))}</div>
               <div className="text-[10px] md:text-xs text-blue-100 mt-0.5">মিনিট</div>
             </div>
             <div className="text-lg md:text-xl font-bold">:</div>
             <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg p-2 md:p-3 min-w-[55px] md:min-w-[65px]">
-              <div className="text-xl md:text-2xl font-bold">{seconds.toString().padStart(2, '0')}</div>
+              <div className="text-xl md:text-2xl font-bold">{toBengaliNumber(seconds.toString().padStart(2, '0'))}</div>
               <div className="text-[10px] md:text-xs text-blue-100 mt-0.5">সেকেন্ড</div>
             </div>
           </div>
@@ -268,7 +270,7 @@ function ElectionCenter() {
       </div>
 
       {/* হেডলাইন স্ট্যাটস */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         {headlineStats.map((s) => (
           <div key={s.label} className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
             <div className="text-sm text-gray-500">{s.label}</div>
@@ -287,34 +289,6 @@ function ElectionCenter() {
             )}
           </div>
         ))}
-      </div>
-
-      {/* ট্রেন্ডস */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <div className="font-semibold text-gray-800">টার্নআউট ট্রেন্ড</div>
-            <span className="text-xs text-gray-500">গত ১১ দিন</span>
-          </div>
-          <Sparkline values={trendSeries.turnout} color="#2563eb" />
-          <div className="mt-2 text-sm text-gray-600">ধীরে ধীরে অংশগ্রহণ বাড়ছে</div>
-        </div>
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <div className="font-semibold text-gray-800">ভোটার আগ্রহ</div>
-            <span className="text-xs text-gray-500">গত ১১ দিন</span>
-          </div>
-          <Sparkline values={trendSeries.interest} color="#16a34a" />
-          <div className="mt-2 text-sm text-gray-600">সোশ্যাল এঙ্গেজমেন্ট বৃদ্ধি পাচ্ছে</div>
-        </div>
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <div className="font-semibold text-gray-800">খবরের উল্লেখ</div>
-            <span className="text-xs text-gray-500">গত ১১ দিন</span>
-          </div>
-          <Sparkline values={trendSeries.newsMentions} color="#f59e0b" />
-          <div className="mt-2 text-sm text-gray-600">মিডিয়ায় কাভারেজ ঊর্ধ্বমুখী</div>
-        </div>
       </div>
 
       {/* পোল অ্যানালিটিক্স (লাইভ) */}
@@ -337,15 +311,15 @@ function ElectionCenter() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
                 <div className="text-xs text-gray-500">মোট পোল</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">{pollsSummary?.totalPolls ?? 0}</div>
+                <div className="text-2xl font-bold text-gray-900 mt-1">{toBengaliNumber(pollsSummary?.totalPolls ?? 0)}</div>
               </div>
               <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
                 <div className="text-xs text-gray-500">সক্রিয় পোল</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">{pollsSummary?.activePolls ?? 0}</div>
+                <div className="text-2xl font-bold text-gray-900 mt-1">{toBengaliNumber(pollsSummary?.activePolls ?? 0)}</div>
               </div>
               <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
                 <div className="text-xs text-gray-500">মোট ভোট</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">{pollsSummary?.totalVotes ?? 0}</div>
+                <div className="text-2xl font-bold text-gray-900 mt-1">{toBengaliNumber(pollsSummary?.totalVotes ?? 0)}</div>
               </div>
               <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
                 <div className="text-xs text-gray-500">ডেটা আপডেট</div>
@@ -368,7 +342,7 @@ function ElectionCenter() {
           ) : pollsSummary?.topPoll ? (
             <>
               <div className="text-gray-800 font-medium">{pollsSummary.topPoll.question}</div>
-              <div className="text-sm text-gray-600 mt-1">মোট ভোট: {pollsSummary.topPoll.votes}</div>
+              <div className="text-sm text-gray-600 mt-1">মোট ভোট: {toBengaliNumber(pollsSummary.topPoll.votes)}</div>
               <div className="mt-4">
                 <div className="w-full h-2.5 bg-gray-100 rounded">
                   <div

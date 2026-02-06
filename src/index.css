@@ -1,3 +1,4 @@
+@import url('https://fonts.maateen.me/kalpurush/font.css');
 @import "tailwindcss";
 @plugin "daisyui";
 @keyframes marquee {
@@ -11,9 +12,9 @@
   }
 
 body {
-  font-family: 'Hind Siliguri', Arial, sans-serif;
+  font-family: 'Kalpurush', serif;
 }
 
 .bangla-font {
-  font-family: 'Hind Siliguri', Arial, sans-serif;
+  font-family: 'Kalpurush', serif;
 }
