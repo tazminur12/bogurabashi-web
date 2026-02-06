@@ -11,19 +11,6 @@ function ElectionResults() {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
 
-  // Helper to assign consistent colors to parties
-  const getPartyColor = (partyName) => {
-    const colors = {
-      'বাংলাদেশ আওয়ামী লীগ': 'bg-green-600',
-      'বাংলাদেশ জাতীয়তাবাদী দল': 'bg-blue-600',
-      'জাতীয় পার্টি': 'bg-yellow-500',
-      'ইসলামী আন্দোলন বাংলাদেশ': 'bg-orange-500',
-      'স্বতন্ত্র': 'bg-gray-500'
-    };
-    // Default to a random vibrant color if not mapped
-    return colors[partyName] || 'bg-purple-600';
-  };
-
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -60,7 +47,7 @@ function ElectionResults() {
                                 name: cand.name,
                                 party: cand.party,
                                 votes: 0,
-                                color: getPartyColor(cand.party)
+                                color: 'bg-blue-600'
                             };
                         }
                         aggregated[constituency].candidates[key].votes += (parseInt(cand.votes) || 0);
@@ -84,6 +71,8 @@ function ElectionResults() {
     };
 
     fetchData();
+    const interval = setInterval(fetchData, 2000);
+    return () => clearInterval(interval);
   }, [axiosSecure]);
 
   if (loading) return (
